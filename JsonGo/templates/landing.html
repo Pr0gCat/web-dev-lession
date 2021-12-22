@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style>
+  #panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+  }
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row" id="panel">
+  <div class="col-sm-4">
+    <div class="card animate__animated animate__fadeIn">
+      {% load static %}
+      <img src="{% static 'img/delivery_guy.jpg' %}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h3 class="text-center card-title">外送員</h3>
+        <p class="card-text">超彈性上班時間! 想做就做，想下班就下班!</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card animate__animated animate__fadeIn">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h3 class="text-center card-title">我要叫外送!</h3>
+        <p class="card-text">手指動一動，生活變輕鬆!</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card animate__animated animate__fadeIn">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h3 class="text-center card-title">商戶</h3>
+        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content.
+          This card has even longer content than the first to show that equal height action.</p>
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
