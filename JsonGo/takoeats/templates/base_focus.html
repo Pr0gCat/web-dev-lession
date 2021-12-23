@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block style %}
+{{ block.super }}
+<style>
+    body {
+        background-color: #62567e !important;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: #fff;
+    }
+
+    .navbar .auth-component .login-btn {
+        font-size: large;
+        border-color: orange;
+        color: orange;
+    }
+
+    .navbar .auth-component .btn {
+        font-size: large;
+        border-width: 2px;
+    }
+
+    .navbar .auth-component .login-btn:hover {
+        border-color: orange;
+        background-color: orange;
+        color: white;
+    }
+
+    .navbar .auth-component .logout-btn {
+        border-color: red;
+        color: red;
+    }
+
+    .navbar .auth-component .logout-btn:hover {
+        border-color: red;
+        background-color: red;
+        color: white;
+    }
+
+    .navbar {
+        box-shadow: none;
+        background-color: #62567e !important;
+    }
+
+    .auth-component label {
+        font-size: large;
+    }
+</style>
+{% endblock %}
+
+{% block nav %}
+<nav class="navbar navbar-expand navbar-dark py-4 justify-content-between">
+    <!-- Navbar content -->
+    <a class="navbar-brand" href="#">
+        {% load static %}
+        <img src="{% static '/images/icon.png'%}" alt="" width="45" height="45">
+        Tak<span style="color: #fab46d">o</span>Eats
+    </a>
+    <!-- Hide auth when logged out -->
+    <div class="auth-component mx-4">
+        {% if user.is_authenticated %}
+        <label class="text-white">{{ user.get_username }}</label>
+        <a class="btn btn-outline-primary logout-btn" href="{% url 'logout' %}">登出</a>
+        {% else %}
+        <a class="btn btn-outline-primary login-btn" href="{% url 'login' %}">登入</a>
+        <a class="btn btn-outline-light" href="{% url 'register' %}">註冊</a>
+        {% endif %}
+    </div>
+</nav>
+{% endblock %}

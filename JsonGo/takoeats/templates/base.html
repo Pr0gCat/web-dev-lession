@@ -8,7 +8,7 @@
   {% load static %}
   <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
 
-  <title>TacoEats | 快速外送服務平台</title>
+  <title>{% block title%}TacoEats{% endblock%} | 快速外送服務平台</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
     integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
@@ -19,22 +19,13 @@
   {% load static %}
   <script src="{% static 'js/global.js'%}"></script>
 
-  {% block style %}
-  <style></style>
-  {% endblock %}
+  {% block style %}{% endblock %}
 </head>
 
 <body>
-  <nav class="navbar navbar-dark navbar-expand">
-    <!-- Navbar content -->
-    <a class="navbar-brand" href="">
-      {% load static %}
-      <img src="{% static '/images/icon.png'%}" alt="" width="30" height="30">
-      TakoEats
-    </a>
-    {% block nav %}
-    {% endblock %}
-  </nav>
+  {% block nav %}
+  {% endblock %}
+  
   <div class="container">
     {% block content %}{% endblock %}
   </div>

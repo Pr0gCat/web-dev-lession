@@ -1,8 +1,23 @@
-{% extends "auth_base.html" %}
-{% block content %}
-<title>你已登出 | TacoEats</title>
-<meta http-equiv="refresh" content="3; url={% url '/' %}"/>
+{% extends "base_focus.html" %}
 
-<p>你已登出</p>
+{% block title%}你已登出{% endblock %}
+
+{% block style %}
+{{ block.super }}
+<style>
+    /* disable auth buttons */
+    .auth-component {
+        display: none;
+    }
+</style>
+</style>
+{% endblock %}
+
+{% block content %}
+<meta http-equiv="refresh" content="3; url=/"/>
+
+<h1>你已登出, 歡迎再次使用 :)</h1>
+
+<a class="text-white" href="/">3秒後自動返回或按此處手動返回</a>
 
 {% endblock %}

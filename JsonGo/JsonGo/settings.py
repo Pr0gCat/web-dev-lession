@@ -31,13 +31,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'takoeats.apps.TakoeatsConfig'
+    'takoeats.apps.TakoeatsConfig',
+    'django.contrib.admin',# admin must be below the app
 ]
 
 MIDDLEWARE = [
@@ -125,6 +125,8 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, '/static/'),
     os.path.join(BASE_DIR, '/tacoeats/static/')
 )
+
+LOGIN_REDIRECT_URL = '/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

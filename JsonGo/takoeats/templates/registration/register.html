@@ -1,0 +1,22 @@
+{% extends "base_focus.html" %}
+
+{% block title%}註冊{% endblock %}
+
+{% block style %}
+{{ block.super }}
+<style>
+    /* disable auth buttons */
+    .auth-component {
+        display: none;
+    }
+</style>
+</style>
+{% endblock %}
+
+{% block content %}
+<form method='POST'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">送出</button>
+</form>
+{% endblock %}

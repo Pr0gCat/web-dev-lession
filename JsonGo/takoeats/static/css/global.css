@@ -3,10 +3,37 @@
 }
 
 body {
-    background-color: #62567e;
+    background-color: #fff;
+}
+
+a:hover {
+    color: white;
+    /* 移除底線 */
+    text-decoration: none;
 }
 
 .navbar {
-    background-color: #62567e;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    background-color: #fff;
 }
+
+.navbar-brand {
+    padding-right: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.navbar-brand img{
+    /*圖片是沒有置中, 所以做8px補償*/
+    position: relative;
+    top: -8px
+}
+
+.sector-name {
+    font-size: 1.2rem;
+}
+
+/* 功能性css */
+.navbar-seprator {
+    border-right: 3px solid #ccc;
+}
+
