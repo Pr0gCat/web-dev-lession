@@ -13,6 +13,11 @@
     border: none;
     border-radius: 10px;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: transform .5s ease;
+	transform: scaleY(1);
+  }
+  .card:hover{
+		transform: scaleY(1.2);
   }
 
 </style>
@@ -23,7 +28,7 @@
   <div class="col-sm-4">
     <div class="card animate__animated animate__fadeIn">
       {% load static %}
-      <img src="{% static 'img/delivery_guy.jpg' %}" class="card-img-top" alt="...">
+      <img src="{% static '/images/delivery.jpg' %}" class="card-img-top">
       <div class="card-body">
         <h3 class="text-center card-title">外送員</h3>
         <p class="card-text">超彈性上班時間! 想做就做，想下班就下班!</p>
