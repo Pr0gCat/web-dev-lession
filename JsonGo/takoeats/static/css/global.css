@@ -1,0 +1,12 @@
+* {
+    font-family: "Helvetica", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
+}
+
+body {
+    background-color: #62567e;
+}
+
+.navbar {
+    background-color: #62567e;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}

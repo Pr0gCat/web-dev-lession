@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style>
+  .card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+  }
+
+  .header-text {
+    font-size: 4rem;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .card {
+    overflow: hidden;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: all .3s ease;
+  }
+
+  .card-holder {
+    min-width: 300px;
+    max-width: 50%;
+    min-height: 250px;
+    border-radius: 10px;
+    transition: all .3s ease;
+    padding: 20px;
+    cursor: pointer;
+  }
+
+  .card-holder:hover .card {
+    /* 放大加陰影 */
+    box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+  }
+
+  .card-body {
+    height: 100%;
+    width: 100%;
+    color: grey;
+    text-align: center;
+    background-color: white;
+  }
+
+  .navbar {
+    /* 只有少數的地方會用到 */
+    box-shadow: none;
+  }
+  
+  .card a {
+    /* 移除底線 */
+    text-decoration: none;
+  }
+</style>
+{% endblock %}
+
+{% block script %}
+<script>
+
+  $("#delivery-card").hover(function () {
+    $("#banner-1").collapse('show');
+  }, function () {
+    $("#banner-1").collapse('hide');
+  });
+
+  $("#customer-card").hover(function () {
+    $("#banner-2").collapse('show');
+  }, function () {
+    $("#banner-2").collapse('hide');
+  });
+
+  $("#shop-card").hover(function () {
+    $("#banner-3").collapse('show');
+  }, function () {
+    $("#banner-3").collapse('hide');
+  });
+
+</script>
+{% endblock %}
+
+{% block content %}
+<h1 class="header-text text-white animate__animated animate__bounceInUp">你是?</h1>
+<div class="row justify-content-center" id="panel">
+  <div id="delivery-card" class="card-holder col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
+    <div class="card">
+      <a class="stretched-link" href="{% url 'd' %}">
+        {% load static %}
+        <img src="{% static '/images/delivery.jpg' %}" class="card-img-top">
+        <div class="card-body">
+          <h3 class="text-center card-title">外送員</h3>
+          <div id="banner-1" class="collapse">彈性上班時間<br>想下班就下班!</div>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div id="customer-card"
+    class="card-holder align-items-center col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
+    <div class="card">
+      <a class="stretched-link" href="{% url 'c' %}">
+      {% load static %}
+      <img src="{% static '/images/customer.jpg'%}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h3 class="text-center card-title">顧客</h3>
+        <div id="banner-2" class="collapse">各種商品應有盡有<br>業界最快的外送速度!</div>
+      </div>
+    </a>
+    </div>
+  </div>
+  <div id="shop-card" class="card-holder col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
+    <div class="card">
+      <a class="stretched-link" href="{% url 's' %}">
+      {% load static %}
+      <img src="{% static '/images/shop.jpg'%}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h3 class="text-center card-title">商戶</h3>
+        <div id="banner-3" class="collapse">手續簡單, 抽成低<br>助你擴展顧客群</div>
+      </div>
+    </a>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
