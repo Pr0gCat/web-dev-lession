@@ -2,13 +2,14 @@
 
 {% block script %}
 <script>
-$(function () {
-    $('[data-toggle="popover"]').popover('toggle');
+  $(function () {
+    // make popover show on hover
     $('[data-toggle="popover"]').popover({
-        trigger: 'focus'
+      trigger: 'hover',
     });
-    $('[data-toggle="popover"]').focus();
-});
+    // make popovers show once page loaded
+    $('[data-toggle="popover"]').popover('show');
+  });
 </script>
 {% endblock %}
 
@@ -18,9 +19,11 @@ $(function () {
   <div class="navbar-brand navbar-seprator">
     {% load static %}
     <img src="{% static '/images/icon.png'%}" alt="" width="45" height="45">
-    <span>Tak<a class="portal-link" tabindex="0" data-toggle="popover" data-placement="bottom" data-content="點選O可以切換用戶身份" href="/" style="color: #fab46d">o</a>Eats</span>
+    Tak<a class="portal-link" tabindex="0" data-toggle="popover" data-placement="bottom" data-content="點選O切換身份" href="/"
+      style="color: #fab46d">o</a>Eats
   </div>
-  <a class="sector-name text-muted my-auto" data-toggle="popover" data-placement="right" data-content="點選這裡可以回到專區首頁" href="">外送員專區</a>
+  <a class="sector-name text-muted my-auto" data-toggle="popover" data-placement="bottom" data-content="點選這裡回到專區首頁"
+    href="">外送員專區</a>
 </nav>
 {% endblock %}
 

@@ -56,8 +56,3 @@ class OrderItems(models.Model):
     def __str__(self):
             return self.id, self.item_id
 
-
-
-
-
-
