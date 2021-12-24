@@ -1,31 +1,7 @@
-{% extends "base.html" %}
+{% extends "homepage_base.html" %}
 
-{% block script %}
-<script>
-  $(function () {
-    // make popover show on hover
-    $('[data-toggle="popover"]').popover({
-      trigger: 'hover',
-    });
-    // make popovers show once page loaded
-    $('[data-toggle="popover"]').popover('show');
-  });
-</script>
-{% endblock %}
-
-{% block nav %}
-<nav class="navbar navbar-expand navbar-light py-4">
-  <!-- Navbar content -->
-  <div class="navbar-brand navbar-seprator">
-    {% load static %}
-    <img src="{% static '/images/icon.png'%}" alt="" width="45" height="45">
-    Tak<a class="portal-link" tabindex="0" data-toggle="popover" data-placement="bottom" data-content="點選O切換身份" href="/"
-      style="color: #fab46d">o</a>Eats
-  </div>
-  <a class="sector-name text-muted my-auto" data-toggle="popover" data-placement="bottom" data-content="點選這裡回到專區首頁"
-    href="">外送員專區</a>
-</nav>
-{% endblock %}
+{% block sector_name %}外送員專區{% endblock %}
+{% block sector_link %}{% url 'd' %}{% endblock %}
 
 {% block content %}
 
