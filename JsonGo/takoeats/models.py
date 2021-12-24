@@ -1,58 +1,49 @@
 from django.db import models
+from django.conf import settings
 
-class Status(models.Model):
-    type = models.CharField(max_length=64)
-
-    def __str__(self):
-            return self.type
-
-
-class Users(models.Model):
-    id = models.CharField(max_length=64, primary_key=True)
-    username = models.CharField(max_length=64)
-    password = models.CharField(max_length=64)
+class User(models.Model):
+    user_entity = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     contact = models.CharField(max_length=64)
-    created_on = models.DateField(max_length=64)
+
     def __str__(self):
-            return self.username
+            return self.user_entity.username
 
+class Shop(models.Model):
+    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    opened = models.BooleanField(default=False)
+    name = models.CharField(max_length=16)
+    rating_sum = models.IntegerField(default=0)
+    rating_count = models.IntegerField(default=0)
 
-class Shops(models.Model):
-    id = models.CharField(max_length=64, primary_key=True)
-    name = models.CharField(max_length=64)
-    rating = models.DecimalField(decimal_places=1,max_digits=2)
-    rating_count = models.IntegerField()
-    owner = models.ForeignKey(Users, on_delete=models.CASCADE)
     def __str__(self):
             return self.name
 
 
-class Items(models.Model):
-    id = models.IntegerField(primary_key=True)
-    shop_id = models.ForeignKey(Shops, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
-    price = models.IntegerField()
+class Item(models.Model):
+    shop_id = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='items')
+    name = models.CharField(max_length=16)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
     available = models.BooleanField()
+
     def __str__(self):
             return self.name
 
-
-class Orders(models.Model):
-    id = models.CharField(max_length=64, primary_key=True)
-    customer = models.CharField(max_length=64)
-    delivery_id = models.CharField(max_length=64)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+class Order(models.Model):
+    customer = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cutomer")
+    delivery = models.OneToOneField(User, on_delete=models.CASCADE, related_name="delivery")
+    status = models.IntegerField()
     order_time = models.TimeField()
+    price_sum = models.DecimalField(max_digits=6, decimal_places=2)
+
     def __str__(self):
             return self.id, self.delivery_id
 
-
-class OrderItems(models.Model):
-    id = models.CharField(max_length=64, primary_key=True)
-    order_id = models.ForeignKey(Orders, on_delete=models.CASCADE)
-    item_id = models.CharField(max_length=64)
-    item_price = models.IntegerField()
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    item = models.OneToOneField(Item, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
     quantity = models.IntegerField()
+
     def __str__(self):
             return self.id, self.item_id
 
