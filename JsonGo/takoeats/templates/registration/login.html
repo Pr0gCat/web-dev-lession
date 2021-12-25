@@ -1,63 +1,4 @@
-{% extends "focus_base.html"%}
-
-{% block title%}登入{% endblock %}
-
-{% block style %}
-{{ block.super }}
-<style>
-    .auth-component {
-        display: none;
-    }
-
-    #main-panel {
-        margin-top: 50px;
-    }
-
-    .form-group {
-        margin-top: 20px;
-        margin-bottom: 20px;
-        margin-left: 30px;
-        margin-right: 30px;
-    }
-
-    .card-header {
-        border-bottom: 2px solid #e5e5e5;
-        font-size: 2rem;
-    }
-
-    .login-title {
-        border-right: 2px solid #fff;
-        padding-right: 10px;
-    }
-
-    .register-btn {
-        font-size: 2rem;
-        color: rgb(165, 165, 165);
-        padding-left: 10px;
-    }
-
-    label {
-        display: none;
-    }
-
-    input {
-        text-align: center;
-    }
-
-    button {
-        text-align: center;
-    }
-
-    .card {
-        background-color: rgba(172, 172, 172, 0.459);
-        border: 1px solid #e5e5e581;
-        box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.3);
-        border-radius: 10px;
-    }
-
-</style>
-{% endblock %}
-
+{% extends "base.html"%}
 {% block content %}
 <div class="d-flex justify-content-center animate__animated animate__fadeInDownBig" id="main-panel">
     <div class="card">
@@ -93,5 +34,4 @@
 
     </div>
 </div>
-
 {% endblock %}
