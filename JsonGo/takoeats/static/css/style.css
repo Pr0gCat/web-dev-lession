@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: url(https://s3.ap-southeast-1.amazonaws.com/web-content.fcu.edu.tw/wp-content/uploads/2020/10/26093447/%E9%A6%96%E9%A0%81_%E7%B8%AE%E5%9C%96-20200218-017-105A2164.jpg) no-repeat;
+    background: #62567e;
     height: 100vh;
     font-family: sans-serif;
     background-size: cover;
@@ -28,7 +28,7 @@ body {
     transform: translate(-50%, -50%);
     width: 350px;
     min-height: 200px;
-    background: #000000;
+    background: #FFFDFA;
     border-radius: 10px;
     padding: 40px;
     box-sizing: border-box
@@ -43,7 +43,7 @@ body {
 h3 {
     margin: 0;
     padding: 0 0 20px;
-    color: #ffffff;
+    color: #000000;
     text-align: center
 }
 
@@ -92,7 +92,7 @@ h3 {
     outline: none;
     height: 40px;
     font-size: 16px;
-    background: #59238F;
+    background: #62567e;
     color: #fff;
     border-radius: 20px;
     cursor: pointer
@@ -100,7 +100,7 @@ h3 {
 
 
 .loginBox a {
-    color: #ffffff;
+    color: #000000;
     font-size: 14px;
     font-weight: bold;
     text-decoration: none;
