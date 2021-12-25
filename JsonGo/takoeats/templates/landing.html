@@ -1,4 +1,4 @@
-{% extends "base_focus.html" %}
+{% extends "focus_base.html" %}
 
 {% block style %}
 {{ block.super }}
@@ -77,7 +77,12 @@
 {% endblock %}
 
 {% block content %}
+{% if user.is_authenticated %}
+<h1 class="header-text text-white animate__animated animate__bounceInUp">歡迎回來 {{ user.username }}, 請選擇身份</h1>
+{% else %}
 <h1 class="header-text text-white animate__animated animate__bounceInUp">您好, 請問您是...?</h1>
+{% endif %}
+
 <div class="row justify-content-center" id="panel">
   <div id="delivery-card" class="card-holder col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
     <div class="card">

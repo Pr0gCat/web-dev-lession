@@ -9,3 +9,6 @@
 * Admin
     * Username: admin
     * Password: admin
+* User A
+    * Username: user
+    * Password: 1234

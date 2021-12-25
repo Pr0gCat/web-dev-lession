@@ -3,8 +3,9 @@ from django.conf import settings
 from django.utils import timezone
 
 class User(models.Model):
+    display_name = models.CharField(max_length=16, null=False)
     user_entity = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    contact = models.CharField(max_length=64)
+    contact = models.CharField(max_length=10)
 
     def __str__(self):
             return self.user_entity.username
@@ -19,11 +20,22 @@ class Shop(models.Model):
     def __str__(self):
             return self.name
 
+class ItemCategory(models.Model):
+    name = models.CharField(max_length=16)
+    def __str__(self):
+            return self.name
+
 class Item(models.Model):
+    ITEM_STATUS = (
+        (0, '上架中'),
+        (1, '已下架'),
+        (2, '已刪除'),
+    )
     shop_id = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='items')
     name = models.CharField(max_length=16)
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    available = models.BooleanField()
+    status = models.IntegerField(choices=ITEM_STATUS, default=1)
+    category = models.ForeignKey(ItemCategory, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
             return self.name

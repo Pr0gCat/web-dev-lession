@@ -1,6 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+
+from .forms import LoginForm, RegisterForm
+from . import models
 
 def index(request):
     """
@@ -8,17 +12,39 @@ def index(request):
     """
     return render(request, 'landing.html')
 
+def user_login(request):
+    """
+        Guide user to login page
+    """
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            login(request, authenticate(username=form.cleaned_data['username'], \
+                password=form.cleaned_data['password']))
+            return redirect(request.POST.get('next', '/'))
+    form = LoginForm()
+    return render(request, 'registration/login.html', 
+        {
+            'form': form
+        })
+
 def register(request):
     """
         Guide user to register page
     """
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
-            return index(request)
+            if form.cleaned_data['password'] == form.cleaned_data['password_confirm']:
+                user = User.objects.create_user(form.cleaned_data['username'], \
+                    '', form.cleaned_data['password'])
+                user.save()
+                models.User(user=user, display_name=form.cleaned_data['display_name'], contact=form.cleaned_data['contact_no']).save()
+                login(request, form.user)
+                return redirect(request.POST.get('next', '/'))
+
     # Display a blank registration form.
-    form = UserCreationForm()
+    form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
 
 @login_required(login_url='/login')
