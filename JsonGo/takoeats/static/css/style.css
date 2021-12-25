@@ -58,7 +58,7 @@ h3 {
     border-bottom: 2px solid #262626;
     outline: none;
     height: 40px;
-    color: #fff;
+    color: #000000;
     background: transparent;
     font-size: 16px;
     padding-left: 20px;
@@ -93,7 +93,7 @@ h3 {
     height: 40px;
     font-size: 16px;
     background: #62567e;
-    color: #000000;
+    color: #fff;
     border-radius: 20px;
     cursor: pointer
 }
