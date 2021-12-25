@@ -41,6 +41,7 @@ def register(request):
                 user.save()
                 models.User(user=user, display_name=form.cleaned_data['display_name'], contact=form.cleaned_data['contact_no']).save()
                 login(request, form.user)
+                print('User created')
                 return redirect(request.POST.get('next', '/'))
 
     # Display a blank registration form.

@@ -1,28 +1,131 @@
-{% extends "base.html"%}
+{% extends "focus_base.html"%}
+
+{% block title%}登入{% endblock %}
+
+{% block style %}
+{{ block.super }}
+<style>
+    .auth-component {
+        display: none;
+    }
+
+    .register-btn {
+        font-size: 2rem;
+        color: rgb(165, 165, 165);
+        padding-left: 10px;
+    }
+
+    .register-btn:hover {
+        color: #62567e;
+    }
+
+
+    label {
+        display: none;
+    }
+
+    button {
+        text-align: center;
+    }
+
+    .card {
+        background: #FFFDFA;
+        border: 1px solid #e5e5e581;
+        box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        box-sizing: border-box;
+        padding: 40px;
+    }
+    .card-header {
+        background-color: transparent;
+    }
+
+    .user {
+        margin: 0 auto;
+        display: block;
+        margin-bottom: 20px
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    form {
+        padding-top: 20px;
+    }
+
+    button[type="submit"] {
+        border: none;
+        outline: none;
+        height: 40px;
+        font-size: 16px;
+        background: #62567e;
+        color: #fff;
+        border-radius: 20px;
+        cursor: pointer
+    }
+
+    button[type="submit"]:hover {
+        background: #8c7cb4;
+        color: #fff;
+    }
+
+    .input-group input {
+        margin-bottom: 20px;
+        border: none;
+        border-bottom: 2px solid #262626;
+        outline: none;
+        height: 40px;
+        color: #000000;
+        background: transparent;
+        font-size: 16px;
+        padding-left: 20px;
+        box-sizing: border-box
+    }
+
+    .input-group input:focus,
+    .input-group input:hover {
+        border-bottom: 3px solid #b3a4db
+    }
+
+    .card-header span {
+        font-size: 2rem;
+        padding-right: 10px;
+        border-right: 2px solid rgb(90, 90, 90);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-{% load static %}
-<div class="loginBox"> <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
-    <h3>登入</h3>
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-
-
-        <div class="inputBox">
-            <input id="username" type="text" name="Username" placeholder="用戶名稱">
-            <input id="password" type="password" name="Password" placeholder="密碼">
+<div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
+    <div class="card">
+        {% load static %}
+        <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
+        <div class="card-header">
+            <span>登入</span><a class="register-btn" href="{% url 'register' %}">注冊</a>
         </div>
-        <input type="submit" name="" value="Login">
-        <input type="hidden" name="next" value="{{ next }}"/>
+        <div class="form-group">
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" name="username" maxlength="64" placeholder="用戶名稱" title="" required=""
+                            id="id_username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="password" name="password" maxlength="64" placeholder="密碼" title="" required=""
+                            id="id_password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-block"><i class="fa fa-sign-in-alt"></i>登入</button>
+                </div>
+            </form>
+        </div>
 
-        {% if next %}
-        <a href="{{ next }}" class="btn btn-primary">Next</a>
-        {% else %}
-        <p>請檢查你的帳號密碼是否無誤</p>
-        {% endif %}
-
-    </form>
-    <a href="">重設密碼?<br> </a>
+    </div>
 </div>
+
 {% endblock %}
