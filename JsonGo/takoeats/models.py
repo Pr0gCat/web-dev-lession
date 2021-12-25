@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 class User(models.Model):
     user_entity = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -18,7 +19,6 @@ class Shop(models.Model):
     def __str__(self):
             return self.name
 
-
 class Item(models.Model):
     shop_id = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='items')
     name = models.CharField(max_length=16)
@@ -29,10 +29,18 @@ class Item(models.Model):
             return self.name
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        (1, '準備中'),
+        (2, '等待外送'),
+        (3, '外送中'),
+        (4, '外送員已到達目的地'),
+        (5, '完成'),
+        (6, '取消'),
+    )
     customer = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cutomer")
     delivery = models.OneToOneField(User, on_delete=models.CASCADE, related_name="delivery")
-    status = models.IntegerField()
-    order_time = models.TimeField()
+    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
+    order_time = models.TimeField(default=timezone.now)
     price_sum = models.DecimalField(max_digits=6, decimal_places=2)
 
     def __str__(self):
