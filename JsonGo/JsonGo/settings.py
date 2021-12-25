@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'takoeats.apps.TakoeatsConfig',
     'django.contrib.admin',# admin must be below the app
+    'bootstrap4',
 ]
 
 MIDDLEWARE = [

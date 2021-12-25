@@ -1,28 +1,97 @@
-{% extends "base.html"%}
+{% extends "focus_base.html"%}
+
+{% block title%}登入{% endblock %}
+
+{% block style %}
+{{ block.super }}
+<style>
+    .auth-component {
+        display: none;
+    }
+
+    #main-panel {
+        margin-top: 50px;
+    }
+
+    .form-group {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        margin-left: 30px;
+        margin-right: 30px;
+    }
+
+    .card-header {
+        border-bottom: 2px solid #e5e5e5;
+        font-size: 2rem;
+    }
+
+    .login-title {
+        border-right: 2px solid #fff;
+        padding-right: 10px;
+    }
+
+    .register-btn {
+        font-size: 2rem;
+        color: rgb(165, 165, 165);
+        padding-left: 10px;
+    }
+
+    label {
+        display: none;
+    }
+
+    input {
+        text-align: center;
+    }
+
+    button {
+        text-align: center;
+    }
+
+    .card {
+        background-color: rgba(172, 172, 172, 0.459);
+        border: 1px solid #e5e5e581;
+        box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+    }
+
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="d-flex justify-content-center" id="main-panel">
+    <div class="card">
+        <div class="card-header">
+            <span class="text-white login-title">登入</span><a class="register-btn" href="{% url 'register' %}">注冊</a>
+        </div>
+        <div class="form-group">
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input type="text" name="username" maxlength="64" class="form-control" placeholder="用戶名稱"
+                            title="" required="" id="id_username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input type="password" name="password" maxlength="64" class="form-control" placeholder="密碼"
+                            title="" required="" id="id_password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-warning btn-block"><i class="fa fa-sign-in-alt"></i>登入</button>
+                </div>
+            </form>
+        </div>
 
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-
-<div>
-    <label for="username">用戶名稱:</label>
-    <input type="text" name="username" id="username" value="{{ username }}" />
+    </div>
 </div>
-<div>
-    <label for="password">密碼:</label>
-    <input type="password" name="password" id="password" />
-</div>
-<div>
-    <input type="submit" value="Log in" />
-    <input type="hidden" name="next" value="{{ next }}" />
-</div>
-
-{% if next %}
-<a href="{{ next }}" class="btn btn-primary">Next</a>
-{% else %}
-<p>請檢查你的帳號密碼是否無誤</p>
-{% endif %}
-
-<p><a href="{% url 'password_reset' %}">重設密碼?</a></p>
 
 {% endblock %}
