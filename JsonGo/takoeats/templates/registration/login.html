@@ -1,37 +1,28 @@
 {% extends "base.html"%}
 {% block content %}
-<div class="d-flex justify-content-center animate__animated animate__fadeInDownBig" id="main-panel">
-    <div class="card">
-        <div class="card-header">
-            <span class="text-white login-title">登入</span><a class="register-btn" href="{% url 'register' %}">注冊</a>
-        </div>
-        <div class="form-group">
-            <form method="post" action="{% url 'login' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-                        </div>
-                        <input type="text" name="username" maxlength="64" class="form-control" placeholder="用戶名稱"
-                            title="" required="" id="id_username">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-                        </div>
-                        <input type="password" name="password" maxlength="64" class="form-control" placeholder="密碼"
-                            title="" required="" id="id_password">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-warning btn-block"><i class="fa fa-sign-in-alt"></i>登入</button>
-                </div>
-            </form>
-        </div>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+{% load static %}
+<div class="loginBox"> <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
+    <h3>登入</h3>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
 
-    </div>
+
+        <div class="inputBox">
+            <input id="username" type="text" name="Username" placeholder="用戶名稱">
+            <input id="password" type="password" name="Password" placeholder="密碼">
+        </div>
+        <input type="submit" name="" value="Login">
+        <input type="hidden" name="next" value="{{ next }}"/>
+
+        {% if next %}
+        <a href="{{ next }}" class="btn btn-primary">Next</a>
+        {% else %}
+        <p>請檢查你的帳號密碼是否無誤</p>
+        {% endif %}
+
+    </form>
+    <a href="">重設密碼?<br> </a>
 </div>
 {% endblock %}
