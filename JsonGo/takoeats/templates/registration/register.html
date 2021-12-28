@@ -36,6 +36,7 @@
         box-sizing: border-box;
         padding: 5%;
     }
+
     .card-header {
         background-color: transparent;
     }
@@ -101,7 +102,7 @@
     <div class="card">
         {% load static %}
         <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
-        <div class="card-header">
+        <div class="card-header text-center">
             <span>註冊</span><a class="register-btn" href="{% url 'login' %}">登入</a>
         </div>
         <div class="form-group">
@@ -109,21 +110,36 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" name="username" maxlength="16" autocapitalize="none" autocomplete="username" autofocus="" placeholder="用戶名稱" title="最多16個字" required="" id="id_username">
+                        <input type="text" name="display_name" maxlength="16" placeholder="顯示名稱" required id="id_display_name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" name="username" maxlength="16" autocapitalize="none" autocomplete="username"
+                            autofocus="" placeholder="用戶名稱" title="最多16個字" required id="id_username">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="password" name="password1" autocomplete="new-password" placeholder="密碼" title="請輸入密碼" required="" id="id_password1">
+                        <input type="password" name="password" autocomplete="new-password" placeholder="密碼"
+                            title="請輸入密碼" required id="id_password">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="password" name="password2" autocomplete="new-password" placeholder="確認輸入密碼" title="再輸入一次" required="" id="id_password2">
+                        <input type="password" name="password_confirm" autocomplete="new-password" placeholder="確認密碼"
+                            title="再輸入一次" required id="id_password_confirm">
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" name="contact_number" maxlength="10" placeholder="聯絡電話" required id="id_contact_number">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <button type="submit" class="btn btn-block"><i class="fa fa-check"></i>註冊</button>
                 </div>

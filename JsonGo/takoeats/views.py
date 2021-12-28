@@ -10,6 +10,9 @@ def index(request):
     """
         Guide user to landing page
     """
+    if request.user.is_authenticated:
+        current_user =  models.User.objects.filter(user_entity=request.user).first()
+        return render(request, 'landing.html', {"current_user": current_user})
     return render(request, 'landing.html')
 
 def user_login(request):
@@ -39,8 +42,8 @@ def register(request):
                 user = User.objects.create_user(form.cleaned_data['username'], \
                     '', form.cleaned_data['password'])
                 user.save()
-                models.User(user=user, display_name=form.cleaned_data['display_name'], contact=form.cleaned_data['contact_no']).save()
-                login(request, form.user)
+                models.User.objects.create(user_entity=user, display_name=form.cleaned_data['display_name'], contact=form.cleaned_data['contact_number']).save()
+                login(request, user)
                 print('User created')
                 return redirect(request.POST.get('next', '/'))
 
