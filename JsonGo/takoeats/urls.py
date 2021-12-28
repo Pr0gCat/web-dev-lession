@@ -26,4 +26,5 @@ urlpatterns = [
     path('s', views.s, name='s'),
     path('c', views.c, name='c'),
     path('d', views.d, name='d'),
+    path('u/<str:user_name>', views.user_profile, name='user'),
 ]

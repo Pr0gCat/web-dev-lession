@@ -9,6 +9,9 @@
 * Admin
     * Username: admin
     * Password: admin
-* User A
+* User
     * Username: user
     * Password: 1234
+* Delivery A
+    * Username: user_a
+    * password: user

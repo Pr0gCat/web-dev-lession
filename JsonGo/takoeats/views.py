@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, InfoUpdateForm
 from . import models
 
 def index(request):
@@ -39,7 +39,6 @@ def register(request):
         Guide user to register page
     """
     error = None
-    next = request.GET.get('next', '')
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -87,3 +86,56 @@ def s(request):
         Guide user to shop mainpage
     """
     return render(request, 'shop/index.html')
+
+@login_required
+def user_profile(request, user_name):
+    """
+        Guide user to their profile
+        User cannot access others address and contact
+    """
+
+    if request.method == 'POST':
+        form = InfoUpdateForm(request.POST)
+        if form.is_valid():
+            user = models.User.objects.filter(user_entity=request.user).first()
+            print(form.cleaned_data)
+            if not str.isdigit(form.cleaned_data['contact']):
+                return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': '請輸入正確的電話號碼'})
+            if not form.cleaned_data['display_name']:
+                return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': '顯示名稱不能為空'})
+            if not form.cleaned_data['address']:
+                return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': '請輸入地址'})
+            
+            user.display_name = form.cleaned_data['display_name']
+            user.contact = form.cleaned_data['contact']
+            user.address = form.cleaned_data['address']
+            user.save()
+        error = '請輸入正確資訊'
+        return redirect(request.path, {'tako_user': user, 'is_self': True, 'error': error})
+    """
+        GET
+    """
+    res = User.objects.filter(username=user_name)
+    user = models.User.objects.filter(user_entity=request.user).first()
+    # check if user exists
+    if not res.exists():
+        return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': f'找不到使用者 {user_name}!'})
+    res = res.first()
+    if res.username == 'admin':
+        return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True})
+    # check if user is going to their profile
+    if request.user.username == user_name:
+        return render(request, 'user_profile.html', {"tako_user": user, 'is_self': True})
+    else:
+        # others profile
+        other_user = User.objects.filter(username=user_name).first()
+        others = models.User.objects.filter(user_entity=other_user).first()
+        return render(request, 'user_profile.html', {"tako_user": others, 'is_self': False})
+
+@login_required
+def shop_profile(request, shop_name):
+    """
+        Guide user to shop info page
+    """
+    # check if user is going to their profile
+    return render(request, 'profile.html')
