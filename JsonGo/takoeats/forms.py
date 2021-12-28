@@ -10,7 +10,7 @@ class LoginForm(forms.Form):
 
 class RegisterForm(forms.Form):
     display_name = forms.CharField(label='顯示名稱', max_length=16, required=True)
-    contact_number = forms.CharField(label='聯絡電話', max_length=10, required=True)
+    contact_number = forms.CharField(label='電話號碼', max_length=10, required=True)
     username = forms.CharField(label='用戶名稱', max_length=16, required=True)
     password = forms.CharField(label='密碼', max_length=64, widget=forms.PasswordInput(), required=True)
     password_confirm = forms.CharField(label='確認密碼', max_length=64, widget=forms.PasswordInput(), required=True)

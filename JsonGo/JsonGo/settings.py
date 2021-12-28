@@ -127,6 +127,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, '/tacoeats/static/')
 )
 
+LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
 # Default primary key field type
