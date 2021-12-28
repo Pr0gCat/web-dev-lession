@@ -39,8 +39,3 @@ a:hover {
 .sector-name {
     font-size: 1.2rem;
 }
-
-/* 功能性css */
-.navbar-seprator {
-    border-right: 3px solid #ccc;
-}
