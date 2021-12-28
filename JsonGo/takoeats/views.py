@@ -22,6 +22,8 @@ def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
+            if not User.objects.filter(username=form.cleaned_data['username']).exists():
+                return render(request, 'registration/login.html', {'form': form, 'error': 'User does not exist'})
             login(request, authenticate(username=form.cleaned_data['username'], \
                 password=form.cleaned_data['password']))
             return redirect(request.POST.get('next', '/'))
@@ -35,6 +37,7 @@ def register(request):
     """
         Guide user to register page
     """
+    error = None
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -46,10 +49,10 @@ def register(request):
                 login(request, user)
                 print('User created')
                 return redirect(request.POST.get('next', '/'))
-
+        error = '帳號資訊錯誤'
     # Display a blank registration form.
     form = RegisterForm()
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form, 'error': error})
 
 @login_required(login_url='/login')
 def d(request):

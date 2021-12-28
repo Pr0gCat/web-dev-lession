@@ -98,13 +98,21 @@
 {% endblock %}
 
 {% block content %}
+{% if error %}
+<div class="main-panel d-flex justify-content-center">
+{% else %}
 <div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
-    <div class="card">
+{% endif %}    <div class="card">
         {% load static %}
         <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
         <div class="card-header text-center">
             <span>註冊</span><a class="register-btn" href="{% url 'login' %}">登入</a>
         </div>
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{error}}
+        </div>
+        {% endif %}
         <div class="form-group">
             <form method="post" action="{% url 'register' %}">
                 {% csrf_token %}
