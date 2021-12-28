@@ -96,8 +96,9 @@ def user_profile(request, user_name):
 
     if request.method == 'POST':
         form = InfoUpdateForm(request.POST)
+        user = models.User.objects.filter(user_entity=request.user).first()
+        error = '輸入資訊錯誤'
         if form.is_valid():
-            user = models.User.objects.filter(user_entity=request.user).first()
             print(form.cleaned_data)
             if not str.isdigit(form.cleaned_data['contact']):
                 return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': '請輸入正確的電話號碼'})
@@ -110,8 +111,8 @@ def user_profile(request, user_name):
             user.contact = form.cleaned_data['contact']
             user.address = form.cleaned_data['address']
             user.save()
-        error = '請輸入正確資訊'
-        return redirect(request.path, {'tako_user': user, 'is_self': True, 'error': error})
+            return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'msg': '更新成功'})
+        return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': error})
     """
         GET
     """
