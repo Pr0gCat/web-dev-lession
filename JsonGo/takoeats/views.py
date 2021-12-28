@@ -30,7 +30,8 @@ def user_login(request):
     form = LoginForm()
     return render(request, 'registration/login.html', 
         {
-            'form': form
+            'form': form,
+            'next': request.GET.get('next', '/')
         })
 
 def register(request):
@@ -38,23 +39,36 @@ def register(request):
         Guide user to register page
     """
     error = None
+    next = request.GET.get('next', '')
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             if form.cleaned_data['password'] == form.cleaned_data['password_confirm']:
-                user = User.objects.create_user(form.cleaned_data['username'], \
-                    '', form.cleaned_data['password'])
-                user.save()
-                models.User.objects.create(user_entity=user, display_name=form.cleaned_data['display_name'], contact=form.cleaned_data['contact_number']).save()
-                login(request, user)
-                print('User created')
-                return redirect(request.POST.get('next', '/'))
-        error = '帳號資訊錯誤'
+                if User.objects.filter(username=form.cleaned_data['username']).exists():
+                    error = '用户已存在'
+                elif not str.isdigit(form.cleaned_data['contact_number']):
+                    error = '請輸入正確的電話號碼'
+                else:
+                    user = User.objects.create_user(form.cleaned_data['username'], \
+                        '', form.cleaned_data['password'])
+                    user.save()
+                    models.User.objects.create(user_entity=user, display_name=form.cleaned_data['display_name'], contact=form.cleaned_data['contact_number']).save()
+                    login(request, user)
+                    print('User created')
+                    return redirect(request.POST.get('next', '/'))
+            else:
+                error = '密碼不一致'
+        else:
+            error = '帳號資訊錯誤'
     # Display a blank registration form.
     form = RegisterForm()
-    return render(request, 'registration/register.html', {'form': form, 'error': error})
+    return render(request, 'registration/register.html', {
+        'form': form, 
+        'error': error,
+        'next': request.GET.get('next', '/')
+    })
 
-@login_required(login_url='/login')
+@login_required
 def d(request):
     """
         Guide user to delivery mainpage
@@ -67,7 +81,7 @@ def c(request):
     """
     return render(request, 'customer/index.html')
 
-@login_required(login_url='/login')
+@login_required
 def s(request):
     """
         Guide user to shop mainpage

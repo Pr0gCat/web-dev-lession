@@ -97,16 +97,16 @@
 {% endblock %}
 
 {% block content %}
-{% if error %}
-<div class="main-panel d-flex justify-content-center">
-{% else %}
-<div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
-{% endif %}
+    {% if error %}
+    <div class="main-panel d-flex justify-content-center">
+    {% else %}
+    <div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
+    {% endif %}
     <div class="card">
         {% load static %}
         <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
         <div class="card-header text-center">
-            <span>登入</span><a class="register-btn" href="{% url 'register' %}">注冊</a>
+            <span>登入</span><a class="register-btn" href="{% url 'register' %}?next={{next}}">注冊</a>
         </div>
         {% if error %}
         <div class="alert alert-danger" role="alert">
@@ -129,6 +129,7 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <input type="hidden" name="next" value="{{next}}" />
                     <button type="submit" class="btn btn-block"><i class="fa fa-sign-in-alt"></i>登入</button>
                 </div>
             </form>

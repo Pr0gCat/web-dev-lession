@@ -98,15 +98,16 @@
 {% endblock %}
 
 {% block content %}
-{% if error %}
-<div class="main-panel d-flex justify-content-center">
-{% else %}
-<div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
-{% endif %}    <div class="card">
+    {% if error %}
+    <div class="main-panel d-flex justify-content-center">
+    {% else %}
+    <div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
+    {% endif %}    
+    <div class="card">
         {% load static %}
         <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
         <div class="card-header text-center">
-            <span>註冊</span><a class="register-btn" href="{% url 'login' %}">登入</a>
+            <span>註冊</span><a class="register-btn" href="{% url 'login' %}?next={{next}}">登入</a>
         </div>
         {% if error %}
         <div class="alert alert-danger" role="alert">
@@ -144,11 +145,12 @@
 
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" name="contact_number" maxlength="10" placeholder="聯絡電話" required id="id_contact_number">
+                        <input type="text" name="contact_number" maxlength="10" placeholder="電話號碼" required id="id_contact_number">
                     </div>
                 </div>
 
                 <div class="form-group">
+                    <input type="hidden" name="next" value="{{next}}" />
                     <button type="submit" class="btn btn-block"><i class="fa fa-check"></i>註冊</button>
                 </div>
             </form>
