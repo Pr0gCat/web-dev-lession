@@ -2,6 +2,15 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
+import os
+import hashlib
+
+def hash_img(instance, filename):
+    instance.image.open()
+    content = instance.image.read()
+    _, ext = os.path.splitext(filename)
+    return f'item_images/{hashlib.sha256(content).hexdigest()}{ext}'
+
 class User(models.Model):
     display_name = models.CharField(max_length=16, null=False)
     user_entity = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -18,7 +27,7 @@ class Shop(models.Model):
     rating_sum = models.IntegerField(default=0)
     rating_count = models.IntegerField(default=0)
     address = models.CharField(max_length=100)
-    shop_img = models.ImageField(upload_to='shop_img', blank=True)
+    image = models.ImageField(upload_to=hash_img, blank=True, null=True)
 
     def __str__(self):
             return self.name
@@ -27,6 +36,8 @@ class ItemCategory(models.Model):
     name = models.CharField(max_length=16)
     def __str__(self):
             return self.name
+
+
 
 class Item(models.Model):
     ITEM_STATUS = (
@@ -39,7 +50,7 @@ class Item(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     status = models.IntegerField(choices=ITEM_STATUS, default=1)
     category = models.ForeignKey(ItemCategory, null=True, on_delete=models.SET_NULL)
-    image = models.ImageField(upload_to='item_images', null=True)
+    image = models.ImageField(upload_to=hash_img, null=True)
 
     def __str__(self):
             return self.name

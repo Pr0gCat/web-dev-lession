@@ -85,19 +85,24 @@ def s(request, user_name=None):
     """
         Guide user to shop mainpage
     """
-    if user_name is None:
+    print(request.path)
+    is_self = False
+    if not user_name and not request.user.is_superuser:
         # create shop if not exist
-        if not models.Shop.objects.filter(owner=request.user).exists() and not request.user.is_superuser:
+        if not models.Shop.objects.filter(owner=request.user).exists():
             owner = models.User.objects.filter(user_entity=request.user).first()
             models.Shop.objects.create(owner=request.user, name=f'{owner.display_name}的商店').save()
+            print('shop created')
         shop = models.Shop.objects.filter(owner=request.user).first()
-        return render(request, 'shop/index.html', {'is_self': True, 'shop': shop})
+        is_self = True
     else:
         # visit other shop
         shop = models.Shop.objects.filter(owner__username=user_name).first()
         if shop is None:
             return render(request, 'shop/index.html', {'is_self': True, 'error': '商店不存在'})
-        return render(request, 'shop/index.html', {'is_self': False, 'shop': shop})
+    items = models.Item.objects.filter(shop=shop).all()
+    print(items)
+    return render(request, 'shop/index.html', {'shop': shop, 'items': items, 'is_self': is_self})
 
 @login_required
 def user_profile(request, user_name):
