@@ -1,4 +1,4 @@
-from django.contrib.auth import login
+from django.urls import path
 from django.contrib.auth.decorators import login_required
 
 def get_random_opened_shop(request):
@@ -53,3 +53,14 @@ def finish_order_task(request):
 def get_order_status(request):
     pass
 
+
+urlpatterns = [
+    path('randshop', get_random_opened_shop, name='randshop'),
+    path('openshop', open_shop, name='openshop'),
+    path('acceptorder', accept_order, name='acceptorder'),
+    path('cancelorder', cancel_order, name='cancelorder'),
+    path('getavailableorder', get_available_order, name='getavailableorder'),
+    path('assignorder', assign_order, name='assignorder'),
+    path('finishordertask', finish_order_task, name='finishordertask'),
+    path('getorderstatus', get_order_status, name='getorderstatus'),
+]
