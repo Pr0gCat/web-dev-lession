@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from datetime import datetime
 
 import os
 import hashlib
@@ -55,6 +56,7 @@ class Item(models.Model):
     def __str__(self):
             return self.name
 
+
 class Order(models.Model):
     STATUS_CHOICES = (
         (1, '準備中'),
@@ -64,6 +66,7 @@ class Order(models.Model):
         (5, '完成'),
         (6, '取消'),
     )
+    order_id = models.AutoField(primary_key = True)
     shop = models.OneToOneField(Shop, on_delete=models.CASCADE, related_name='shop')
     customer = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cutomer")
     delivery = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="delivery")
@@ -73,14 +76,15 @@ class Order(models.Model):
     address = models.CharField(max_length=100)
 
     def __str__(self):
-            return self.id, self.delivery_id
+                return str(self.order_id), str(self.price_sum)
 
 class OrderItem(models.Model):
+    items = models.AutoField(primary_key = True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     item = models.OneToOneField(Item, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     quantity = models.IntegerField()
 
     def __str__(self):
-            return self.id, self.item_id
+                    return str(self.items), str(self.quantity)
 
