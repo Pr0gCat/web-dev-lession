@@ -8,11 +8,14 @@ def get_random_opened_shop(request):
 商店管理
 """
 @login_required
-def close_shop(request):
-    pass
-
-@login_required
 def open_shop(request):
+    """
+        post:
+            商店開店
+            params: 's' - 1: 開店, 0: 關店
+        get:
+            得取狀態
+    """
     pass
 
 @login_required

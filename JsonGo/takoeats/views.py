@@ -85,6 +85,10 @@ def s(request):
     """
         Guide user to shop mainpage
     """
+    # create shop if not exist
+    if not models.Shop.objects.filter(shop_entity=request.user).exists():
+        owner = models.User.objects.filter(user_entity=request.user).first()
+        models.Shop.objects.create(owner=owner, name=f'{owner.username}的商店').save()
     return render(request, 'shop/index.html')
 
 @login_required
