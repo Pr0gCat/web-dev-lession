@@ -45,13 +45,13 @@ def register(request):
             if form.cleaned_data['password'] == form.cleaned_data['password_confirm']:
                 if User.objects.filter(username=form.cleaned_data['username']).exists():
                     error = '用户已存在'
-                elif not str.isdigit(form.cleaned_data['contact_number']):
+                elif not str.isdigit(form.cleaned_data['contact']):
                     error = '請輸入正確的電話號碼'
                 else:
                     user = User.objects.create_user(form.cleaned_data['username'], \
                         '', form.cleaned_data['password'])
                     user.save()
-                    models.User.objects.create(user_entity=user, display_name=form.cleaned_data['display_name'], contact=form.cleaned_data['contact_number']).save()
+                    models.User.objects.create(user_entity=user, display_name=form.cleaned_data['display_name'], contact=form.cleaned_data['contact']).save()
                     login(request, user)
                     print('User created')
                     return redirect(request.POST.get('next', '/'))
@@ -81,15 +81,19 @@ def c(request):
     return render(request, 'customer/index.html')
 
 @login_required
-def s(request):
+def s(request, user_name=None):
     """
         Guide user to shop mainpage
     """
-    # create shop if not exist
-    if not models.Shop.objects.filter(shop_entity=request.user).exists():
-        owner = models.User.objects.filter(user_entity=request.user).first()
-        models.Shop.objects.create(owner=owner, name=f'{owner.username}的商店').save()
-    return render(request, 'shop/index.html')
+    if user_name is None:
+        # create shop if not exist
+        if not models.Shop.objects.filter(owner=request.user).exists() and not request.user.is_superuser:
+            owner = models.User.objects.filter(user_entity=request.user).first()
+            models.Shop.objects.create(owner=request.user, name=f'{owner.display_name}的商店').save()
+        return render(request, 'shop/index.html')
+    else:
+        # visit other shop
+        pass
 
 @login_required
 def user_profile(request, user_name):
@@ -108,14 +112,12 @@ def user_profile(request, user_name):
                 return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': '請輸入正確的電話號碼'})
             if not form.cleaned_data['display_name']:
                 return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': '顯示名稱不能為空'})
-            if not form.cleaned_data['address']:
-                return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': '請輸入地址'})
             
             user.display_name = form.cleaned_data['display_name']
             user.contact = form.cleaned_data['contact']
             user.address = form.cleaned_data['address']
             user.save()
-            return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'msg': '更新成功'})
+            return redirect('/u/' + request.user.username)
         return render(request, 'user_profile.html', {'tako_user': user, 'is_self': True, 'error': error})
     """
         GET

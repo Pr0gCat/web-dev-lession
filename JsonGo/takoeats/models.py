@@ -12,7 +12,7 @@ class User(models.Model):
             return self.user_entity.username
 
 class Shop(models.Model):
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     opened = models.BooleanField(default=False)
     name = models.CharField(max_length=16)
     rating_sum = models.IntegerField(default=0)
@@ -34,7 +34,7 @@ class Item(models.Model):
         (1, '已下架'),
         (2, '已刪除'),
     )
-    shop_id = models.OneToOneField(Shop, on_delete=models.CASCADE, related_name='items')
+    shop = models.OneToOneField(Shop, on_delete=models.CASCADE, related_name='items')
     name = models.CharField(max_length=16)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     status = models.IntegerField(choices=ITEM_STATUS, default=1)
@@ -54,8 +54,8 @@ class Order(models.Model):
         (6, '取消'),
     )
     shop = models.OneToOneField(Shop, on_delete=models.CASCADE, related_name='shop')
-    customer = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cutomer")
-    delivery = models.OneToOneField(User, on_delete=models.CASCADE, related_name="delivery")
+    customer = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cutomer")
+    delivery = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="delivery")
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     order_time = models.TimeField(default=timezone.now)
     price_sum = models.DecimalField(max_digits=6, decimal_places=2)
