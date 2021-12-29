@@ -90,10 +90,14 @@ def s(request, user_name=None):
         if not models.Shop.objects.filter(owner=request.user).exists() and not request.user.is_superuser:
             owner = models.User.objects.filter(user_entity=request.user).first()
             models.Shop.objects.create(owner=request.user, name=f'{owner.display_name}的商店').save()
-        return render(request, 'shop/index.html')
+        shop = models.Shop.objects.filter(owner=request.user).first()
+        return render(request, 'shop/index.html', {'is_self': True, 'shop': shop})
     else:
         # visit other shop
-        pass
+        shop = models.Shop.objects.filter(owner__username=user_name).first()
+        if shop is None:
+            return render(request, 'shop/index.html', {'is_self': True, 'error': '商店不存在'})
+        return render(request, 'shop/index.html', {'is_self': False, 'shop': shop})
 
 @login_required
 def user_profile(request, user_name):
