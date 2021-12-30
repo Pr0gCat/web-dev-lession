@@ -54,6 +54,8 @@
     <a class="sector-name text-muted my-auto" data-toggle="popover" data-placement="bottom" data-content="點選這裡回到專區首頁"
       href="{% block sector_link %}{% endblock %}">{% block sector_name %}{% endblock %}</a>
   </div>
+  <div class="right-side">
+    {% block nav_content %}{% endblock %}
   <div class="auth-component mx-4 text-center">
     <a class="profile-link btn text-black" href="{% url 'user' user_name=request.user.username %}">個人檔案</a>
     {% if user.is_authenticated %}
@@ -62,6 +64,11 @@
     <a class="btn btn-outline-light login-btn" href="{% url 'login' %}">登入</a>
     {% endif %}
   </div>
-
+  </div>
 </nav>
+{% endblock %}
+
+{% block content %}
+<!-- menu -->
+
 {% endblock %}

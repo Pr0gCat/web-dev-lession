@@ -19,6 +19,7 @@
     }
 
     .banner-img {
+        border-radius: 10px 10px 0px 0px;
         user-select: none;
         object-fit: cover;
         width: 100%;
@@ -69,6 +70,7 @@
 {% endblock %}
 
 {% block content %}
+{% block.super %}
 <div class="container-fluid">
     <div class="card view">
         <div class="banner col-12">
