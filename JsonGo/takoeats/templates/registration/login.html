@@ -36,6 +36,7 @@
         box-sizing: border-box;
         padding: 40px;
     }
+
     .card-header {
         background-color: transparent;
     }
@@ -97,45 +98,47 @@
 {% endblock %}
 
 {% block content %}
+<div class="container">
     {% if error %}
     <div class="main-panel d-flex justify-content-center">
-    {% else %}
-    <div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
-    {% endif %}
-    <div class="card">
-        {% load static %}
-        <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
-        <div class="card-header text-center">
-            <span>登入</span><a class="register-btn" href="{% url 'register' %}?next={{next}}">注冊</a>
-        </div>
-        {% if error %}
-        <div class="alert alert-danger" role="alert">
-            {{error}}
-        </div>
-        {% endif %}
-        <div class="form-group">
-            <form method="post" action="{% url 'login' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" name="username" maxlength="64" placeholder="用戶ID" title="" required=""
-                            id="id_username">
-                    </div>
+        {% else %}
+        <div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
+            {% endif %}
+            <div class="card">
+                {% load static %}
+                <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
+                <div class="card-header text-center">
+                    <span>登入</span><a class="register-btn" href="{% url 'register' %}?next={{next}}">注冊</a>
                 </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="password" name="password" maxlength="64" placeholder="密碼" title="" required=""
-                            id="id_password">
-                    </div>
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{error}}
                 </div>
+                {% endif %}
                 <div class="form-group">
-                    <input type="hidden" name="next" value="{{next}}" />
-                    <button type="submit" class="btn btn-block"><i class="fa fa-sign-in-alt"></i>登入</button>
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" name="username" maxlength="64" placeholder="用戶ID" title=""
+                                    required="" id="id_username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="password" name="password" maxlength="64" placeholder="密碼" title=""
+                                    required="" id="id_password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" name="next" value="{{next}}" />
+                            <button type="submit" class="btn btn-block"><i class="fa fa-sign-in-alt"></i>登入</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
 
+            </div>
+        </div>
     </div>
-</div>
 </div>
 {% endblock %}

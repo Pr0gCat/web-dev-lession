@@ -98,65 +98,69 @@
 {% endblock %}
 
 {% block content %}
+<div class="container">
     {% if error %}
     <div class="main-panel d-flex justify-content-center">
-    {% else %}
-    <div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
-    {% endif %}    
-    <div class="card">
-        {% load static %}
-        <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
-        <div class="card-header text-center">
-            <span>註冊</span><a class="register-btn" href="{% url 'login' %}?next={{next}}">登入</a>
+        {% else %}
+        <div class="main-panel d-flex justify-content-center animate__animated animate__fadeInDownBig">
+            {% endif %}
+            <div class="card">
+                {% load static %}
+                <img class="user" src="{% static '/images/icon.png'%}" height="100px" width="100px">
+                <div class="card-header text-center">
+                    <span>註冊</span><a class="register-btn" href="{% url 'login' %}?next={{next}}">登入</a>
+                </div>
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{error}}
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <form method="post" action="{% url 'register' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" name="display_name" maxlength="16" placeholder="顯示名稱" required
+                                    id="id_display_name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" name="username" maxlength="16" autocapitalize="none"
+                                    autocomplete="username" autofocus="" placeholder="用戶ID" title="最多16個字" required
+                                    id="id_username">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="password" name="password" autocomplete="new-password" placeholder="密碼"
+                                    title="請輸入密碼" required id="id_password">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="password" name="password_confirm" autocomplete="new-password"
+                                    placeholder="確認密碼" title="再輸入一次" required id="id_password_confirm">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="tel" name="contact" maxlength="10" placeholder="電話號碼" required
+                                    id="id_contact">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="hidden" name="next" value="{{next}}" />
+                            <button type="submit" class="btn btn-block"><i class="fa fa-check"></i>註冊</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        {% if error %}
-        <div class="alert alert-danger" role="alert">
-            {{error}}
-        </div>
-        {% endif %}
-        <div class="form-group">
-            <form method="post" action="{% url 'register' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" name="display_name" maxlength="16" placeholder="顯示名稱" required id="id_display_name">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" name="username" maxlength="16" autocapitalize="none" autocomplete="username"
-                            autofocus="" placeholder="用戶ID" title="最多16個字" required id="id_username">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="password" name="password" autocomplete="new-password" placeholder="密碼"
-                            title="請輸入密碼" required id="id_password">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="password" name="password_confirm" autocomplete="new-password" placeholder="確認密碼"
-                            title="再輸入一次" required id="id_password_confirm">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="tel" name="contact" maxlength="10" placeholder="電話號碼" required id="id_contact">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <input type="hidden" name="next" value="{{next}}" />
-                    <button type="submit" class="btn btn-block"><i class="fa fa-check"></i>註冊</button>
-                </div>
-            </form>
-        </div>
-
     </div>
-</div>
 
-{% endblock %}
+    {% endblock %}

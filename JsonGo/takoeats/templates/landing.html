@@ -77,48 +77,51 @@
 {% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-<h1 class="header-text text-white animate__animated animate__bounceInUp">歡迎回來 {{ current_user.display_name }}, 請選擇身份</h1>
-{% else %}
-<h1 class="header-text text-white animate__animated animate__bounceInUp">您好, 請問您是...?</h1>
-{% endif %}
+<div class="container">
+  {% if user.is_authenticated %}
+  <h1 class="header-text text-white animate__animated animate__bounceInUp">歡迎回來 {{ current_user.display_name }}, 請選擇身份
+  </h1>
+  {% else %}
+  <h1 class="header-text text-white animate__animated animate__bounceInUp">您好, 請問您是...?</h1>
+  {% endif %}
 
-<div class="row justify-content-center" id="panel">
-  <div id="delivery-card" class="card-holder col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
-    <div class="card">
-      <a class="stretched-link" href="{% url 'd' %}">
-        {% load static %}
-        <img src="{% static '/images/delivery.jpg' %}" class="card-img-top">
-        <div class="card-body">
-          <h3 class="text-center card-title">外送員</h3>
-          <div id="banner-1" class="collapse">彈性上班時間<br>想下班就下班!</div>
-        </div>
-      </a>
-    </div>
-  </div>
-  <div id="customer-card"
-    class="card-holder align-items-center col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
-    <div class="card">
-      <a class="stretched-link" href="{% url 'c' %}">
-      {% load static %}
-      <img src="{% static '/images/customer.jpg'%}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h3 class="text-center card-title">顧客</h3>
-        <div id="banner-2" class="collapse">各種商品應有盡有<br>業界最快的外送速度!</div>
+  <div class="row justify-content-center" id="panel">
+    <div id="delivery-card" class="card-holder col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
+      <div class="card">
+        <a class="stretched-link" href="{% url 'd' %}">
+          {% load static %}
+          <img src="{% static '/images/delivery.jpg' %}" class="card-img-top">
+          <div class="card-body">
+            <h3 class="text-center card-title">外送員</h3>
+            <div id="banner-1" class="collapse">彈性上班時間<br>想下班就下班!</div>
+          </div>
+        </a>
       </div>
-    </a>
     </div>
-  </div>
-  <div id="shop-card" class="card-holder col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
-    <div class="card">
-      <a class="stretched-link" href="{% url 's' %}">
-      {% load static %}
-      <img src="{% static '/images/shop.jpg'%}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h3 class="text-center card-title">商戶</h3>
-        <div id="banner-3" class="collapse">手續簡單, 抽成低<br>助你擴展顧客群</div>
+    <div id="customer-card"
+      class="card-holder align-items-center col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
+      <div class="card">
+        <a class="stretched-link" href="{% url 'c' %}">
+          {% load static %}
+          <img src="{% static '/images/customer.jpg'%}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h3 class="text-center card-title">顧客</h3>
+            <div id="banner-2" class="collapse">各種商品應有盡有<br>業界最快的外送速度!</div>
+          </div>
+        </a>
       </div>
-    </a>
+    </div>
+    <div id="shop-card" class="card-holder col-lg-4 animate__animated animate__bounceInUp animate__delay-1s">
+      <div class="card">
+        <a class="stretched-link" href="{% url 's' %}">
+          {% load static %}
+          <img src="{% static '/images/shop.jpg'%}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h3 class="text-center card-title">商戶</h3>
+            <div id="banner-3" class="collapse">手續簡單, 抽成低<br>助你擴展顧客群</div>
+          </div>
+        </a>
+      </div>
     </div>
   </div>
 </div>

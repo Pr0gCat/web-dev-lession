@@ -23,99 +23,101 @@
 {% endblock %}
 
 {% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <button class="btn btn-secondary" onclick="window.history.go(-1);">上一頁</button>
+        <div class="col-md-6">
 
-<div class="row justify-content-center">
-    <button class="btn btn-secondary" onclick="window.history.go(-1);">上一頁</button>
-    <div class="col-md-6">
-
-        <div class="card">
-            <div class="card-header">
-                <h5>{{ tako_user.display_name }}</h5>
-            </div>
-            <div class="card-body">
-                {% if error %}
-                <div class="alert alert-danger" role="alert">
-                    {{error}}
+            <div class="card">
+                <div class="card-header">
+                    <h5>{{ tako_user.display_name }}</h5>
                 </div>
-                {% endif %}
-                {% if msg %}
-                <div class="alert alert-success" role="alert">
-                    {{msg}}
-                </div>
-                {% endif %}
-                <form method="post" action="{{ request.path }}">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="name">用戶ID</label>
-                                <input type="text" class="form-control" id="name" name="name"
-                                    value="{{ tako_user.user_entity.username }}" disabled>
-                            </div>
-                        </div>
-                    </div>
-                    {% if is_self %}
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="display_name">顯示名稱</label>
-                                <input type="text" class="form-control" id="id_display_name" name="display_name"
-                                    value="{{ tako_user.display_name }}" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="phone">電話</label>
-                                <input type="tel" class="form-control" id="id_contact" name="contact"
-                                    value="{{ tako_user.contact }}" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="address">地址</label>
-                                <input type="text" class="form-control" id="id_address" name="address"
-                                    value="{{ tako_user.address }}">
-                            </div>
-                        </div>
+                <div class="card-body">
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{error}}
                     </div>
                     {% endif %}
-                    <div class="row justify-content-between">
-                        <div class="col-8">
-                            <label class="text-muted">加入日期: {{ tako_user.user_entity.date_joined }}</label>
-                        </div>
-                        <div class="col-3">
-                            {% if is_self %}
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmModal">儲存</button>
-                            {% endif %}
-                        </div>
+                    {% if msg %}
+                    <div class="alert alert-success" role="alert">
+                        {{msg}}
                     </div>
-                    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
-                        aria-labelledby="confirmModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="confirmModalLabel">注意!</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    是否儲存更改?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">否</button>
-                                    <button type="submit" class="btn btn-primary">是</button>
+                    {% endif %}
+                    <form method="post" action="{{ request.path }}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">用戶ID</label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ tako_user.user_entity.username }}" disabled>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
+                        {% if is_self %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="display_name">顯示名稱</label>
+                                    <input type="text" class="form-control" id="id_display_name" name="display_name"
+                                        value="{{ tako_user.display_name }}" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">電話</label>
+                                    <input type="tel" class="form-control" id="id_contact" name="contact"
+                                        value="{{ tako_user.contact }}" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="address">地址</label>
+                                    <input type="text" class="form-control" id="id_address" name="address"
+                                        value="{{ tako_user.address }}">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="row justify-content-between">
+                            <div class="col-8">
+                                <label class="text-muted">加入日期: {{ tako_user.user_entity.date_joined }}</label>
+                            </div>
+                            <div class="col-3">
+                                {% if is_self %}
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#confirmModal">儲存</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+                            aria-labelledby="confirmModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="confirmModalLabel">注意!</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        是否儲存更改?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">否</button>
+                                        <button type="submit" class="btn btn-primary">是</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

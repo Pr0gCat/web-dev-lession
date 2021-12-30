@@ -3,18 +3,141 @@
 {% block sector_name %}商戶專區{% endblock %}
 {% block sector_link %}{% url 's' %}{% endblock %}
 
+{% block style %}
+{{ block.super }}
+<style>
+
+    .view {
+        width: 100%;
+        border-radius: 20px 20px 0px 0px;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+    }
+
+    .banner {
+        padding: 0;
+    }
+
+    .banner-img {
+        user-select: none;
+        object-fit: cover;
+        width: 100%;
+        height: 30vh;
+        display: block;
+        filter: brightness(0.5);
+    }
+
+    .back-btn {
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: rgba(255, 255, 255, 0.89);
+    }
+
+    .banner-header {
+        position: absolute;
+        bottom: 15%;
+        left: 3%;
+        font-size: 3rem;
+    }
+
+    .banner-owner {
+        color: rgba(255, 255, 255, 0.794);
+        position: absolute;
+        bottom: 8%;
+        left: 4%;
+        font-size: 1.2rem;
+    }
+
+    .menu {
+        padding-top: 50px;
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+        border-top: none;
+    }
+
+    .item {
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Nav tabs -->
-<div class="row justify-content-between">
-    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
-            aria-controls="v-pills-home" aria-selected="true">Home</a>
-    </div>
-    <div class="tab-content" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">...
+<div class="container-fluid">
+    <div class="card view">
+        <div class="banner col-12">
+            {% if shop.image_url %}
+            <img src="{{ shop.image.url }}" class="img-fluid banner-img" alt="Responsive image" draggable="false">
+            {% else %}
+            <img src="https://picsum.photos/1920/300" class="img-fluid banner-img" alt="Responsive image"
+                draggable="false">
+            {% endif %}
+            <a onclick="window.history.go(-1);"><i class="fas fa-arrow-left fa-2x back-btn"></i></a>
+            <div class="text-white banner-header">{{ shop.name }}</div>
+            <div class="banner-owner">店家: {{ shop.owner.username }}</div>
+        </div>
+        <!-- Nav tabs -->
+        <div class="row menu">
+            {% regroup items by category as items_by_category %}
+            <div id="item-list" class="list-group col-3">
+                <a class="list-group-item list-group-item-action" href="#all">全部</a>
+                {% for category in items_by_category %}
+                <a class="list-group-item list-group-item-action"
+                    href="#cate-{{category.grouper}}">{{category.grouper}}</a>
+                {% endfor %}
+            </div>
+
+            <div class="col">
+                <div class="row-12" data-spy="scroll" data-target="#item-list" data-offset="0">
+                    <h1 id="list-item-1">全部</h1>
+                    {% for item in items %}
+                    <div class="card mb-3 item">
+                        <div class="row no-gutters">
+                            <div class="col-md-2">
+                                <img src="{{ item.image.url }}" class="card-img" alt="404 image not found">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ item.name }}</h5>
+                                    <span class="price">${{ item.price }}</span>
+                                    <p class="card-text text-muted">{{ item.desc }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <h2 class="text-muted">空空如也...</h2>
+                    {% endfor %}
+                    <!-- categories -->
+                    {% for category in items_by_category %}
+
+                    <h1 id="list-item-{{category.grouper}}">{{category.grouper}}</h1>
+                    {% for item in category.list %}
+                    <div class="card mb-3 item">
+                        <div class="row no-gutters">
+                            <div class="col-md-2">
+                                <img src="{{ item.image.url }}" class="card-img" alt="404 image not found">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ item.name }}</h5>
+                                    <span class="price">${{ item.price }}</span>
+                                    <p class="card-text text-muted">{{ item.desc }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-
 {% endblock %}
