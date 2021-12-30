@@ -142,14 +142,12 @@
 
 
 {% block content %}
-
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
 <body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <div class="container">
     <nav class="navbar navbar-default">
         <div class="navbar-header">
@@ -175,7 +173,7 @@
             </li>
             <li><a href="#"><i class="fa fa-cogs" aria-hidden="true"></i>活動狀態和配置設定</a></li>
             <li><a href="#"><i class="fa fa-building" aria-hidden="true"></i>聯繫總部</a></li>
-            <li class="custom-login"><a><i class="fa fa-user" aria-hidden="false"></i>{ current_user.display_name }</a></li>
+            <li class="custom-login"><a><i class="fa fa-user" aria-hidden="false"></i>{ user.display_name }</a></li>
             <li class="search">
                 <div class="input-group stylish-input-group">
                     <input type="text" class="form-control" placeholder="Search" >
@@ -205,23 +203,6 @@
             <div class="fakeimg" style="height:200px;">Image</div>
             <p>Some text..</p>
             <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
-        </div>
-    </div>
-    <div class="rightcolumn">
-        <div class="card">
-            <h2>About Me</h2>
-            <div class="fakeimg" style="height:100px;">Image</div>
-            <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
-        </div>
-        <div class="card">
-            <h3>Popular Post</h3>
-            <div class="fakeimg"><p>Image</p></div>
-            <div class="fakeimg"><p>Image</p></div>
-            <div class="fakeimg"><p>Image</p></div>
-        </div>
-        <div class="card">
-            <h3>Follow Me</h3>
-            <p>Some text..</p>
         </div>
     </div>
 </div>
