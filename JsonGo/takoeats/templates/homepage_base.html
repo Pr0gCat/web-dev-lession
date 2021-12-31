@@ -27,6 +27,13 @@
     .auth-component label {
         font-size: large;
     }
+
+    .action-menu {
+      position: fixed;
+      z-index: 9999;
+      bottom: 0%;
+      right: 2%;
+    }
 </style>
 {% endblock %}
 
@@ -69,6 +76,12 @@
 {% endblock %}
 
 {% block content %}
-<!-- menu -->
-
+<div class="action-menu btn-group dropup">
+  <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    {% block action_menu_icon %}{% endblock %}
+  </button>
+  <div class="dropdown-menu">
+    {% block action_menu_content %}{% endblock %}
+  </div>
+</div>
 {% endblock %}
