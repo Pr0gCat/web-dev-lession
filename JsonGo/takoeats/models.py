@@ -5,6 +5,7 @@ from datetime import datetime
 
 import os
 import hashlib
+import json
 
 def hash_img(instance, filename):
     instance.image.open()
@@ -55,7 +56,7 @@ class Item(models.Model):
     desc = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-            return self.name
+            return json.dumps({'id': self.id, 'name': self.name, 'price': float(self.price), 'status': self.status, 'category': self.category.name})
 
 
 class Order(models.Model):

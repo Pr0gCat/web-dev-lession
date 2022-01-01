@@ -3,10 +3,95 @@
 {% block sector_name %}商戶專區{% endblock %}
 {% block sector_link %}{% url 's' %}{% endblock %}
 
+{% block script %}
+<script>
+    // ugly code, I know but deadline is short
+    function render_cart(cart){
+        var item_sum = 0;
+        var price_total = 0;
+        $('#cart-items').html('');
+        for(k in cart){
+            var item_html = '<div class="card">'+
+                                '<div class="card-body">'+
+                                    '<div class="row justify-content-between">'+
+                                        '<h5 class="card-title">'+cart[k].name+'</h5>'+
+                                        ' X <p class="card-text">'+cart[k].quantity+'</p>'+
+                                        '=<p class="card-text">$'+cart[k].price*cart[k].quantity+'</p>'+
+                                        '<button class="btn fas fa-times" onclick="remove_item('+ k +')"></button>'+
+                                        '</div>'+
+                                '</div>'+
+                            '</div>';
+            $('#cart-items').html(item_html);
+            price_total += cart[k].price*cart[k].quantity;
+            item_sum += cart[k].quantity;
+        }
+        $('.items-in-cart').text('(' + item_sum + ')' + ' $' + price_total);
+    }
+
+    $(document).ready(function(){
+        var shopping_cart = sessionStorage.getItem('cart');
+        if(shopping_cart != undefined){
+            shopping_cart = JSON.parse(shopping_cart);
+        }else{
+            shopping_cart = {};
+        }
+        render_cart(shopping_cart);
+    });
+    function cb(item){
+        var shop_id = sessionStorage.getItem('shop_id');
+        if(shop_id != {{ shop.id }}){
+            sessionStorage.setItem('shop_id', {{ shop.id }});
+            sessionStorage.setItem('cart', JSON.stringify({}));
+        }
+        var shopping_cart = sessionStorage.getItem('cart');
+        if(shopping_cart != undefined){
+            shopping_cart = JSON.parse(shopping_cart);
+        }else{
+            shopping_cart = {};
+        }
+
+        console.log(item);
+        if(shopping_cart[item.id] == undefined){
+            shopping_cart[item.id] = {
+                'id': item.id,
+                'name': item.name,
+                'price': item.price,
+                'quantity': 1
+            };
+        }else{
+            shopping_cart[item.id].quantity += 1;
+        }
+        console.log(shopping_cart);
+        sessionStorage.setItem('cart', JSON.stringify(shopping_cart));
+        render_cart(shopping_cart);
+    }
+
+    function remove_item(k){
+        console.log('remove', k);
+        var shopping_cart = sessionStorage.getItem('cart');
+        shopping_cart = JSON.parse(shopping_cart);
+        if(shopping_cart[k].quantity > 1){
+            console.log('remove 1');
+            shopping_cart[k].quantity -= 1;
+        }else{
+            console.log('delete');
+            delete shopping_cart[k];
+            console.log(shopping_cart);
+        }
+        sessionStorage.setItem('cart', JSON.stringify(shopping_cart));
+        render_cart(shopping_cart);
+    }
+
+    function empty_cart(){
+        sessionStorage.setItem('cart', JSON.stringify({}));
+        render_cart({});
+    }
+</script>
+{% endblock %}
+
 {% block style %}
 {{ block.super }}
 <style>
-
     .view {
         width: 100%;
         margin-bottom: 20px;
@@ -49,6 +134,14 @@
         font-size: 1.2rem;
     }
 
+    .shop-status {
+        position: absolute;
+        bottom: 8%;
+        right: 4%;
+        font-size: 2rem;
+        color: rgb(224, 224, 224);
+    }
+
     .menu {
         padding-top: 50px;
         padding-left: 5%;
@@ -70,6 +163,31 @@
         height: 100%;
         object-fit: cover;
     }
+
+    .fa-cart-plus {
+        color: #9c9c9c;
+        cursor: pointer;
+    }
+
+    .addcart-icon {
+        position: absolute;
+        right: 3%;
+        bottom: 10%;
+    }
+
+    .dropdown-menu {
+        width: 400px;
+        height: 600px;
+    }
+
+    #shopping-cart-card {
+        height: 100%;
+    }
+
+    .card-header {
+        background-color: transparent;
+        border: none;
+    }
 </style>
 {% endblock %}
 
@@ -79,53 +197,34 @@
     <div class="card view">
         <div class="banner col-12">
             {% if shop.image_url %}
-            <img src="{{ shop.image.url }}" class="img-fluid banner-img" alt="Responsive image" draggable="false">
+            <img src="{{ shop.image.url }}" class="img-fluid banner-img animate__animated animate__fadeIn" alt="Responsive image" draggable="false">
             {% else %}
-            <img src="https://picsum.photos/1920/300" class="img-fluid banner-img" alt="Responsive image"
+            <img src="https://picsum.photos/1920/300" class="img-fluid banner-img animate__animated animate__fadeIn" alt="Responsive image"
                 draggable="false">
             {% endif %}
             <a onclick="window.history.go(-1);"><i class="fas fa-arrow-left fa-2x back-btn"></i></a>
             <div class="text-white banner-header">{{ shop.name }}</div>
             <div class="banner-owner">店家: {{ shop.owner.username }}</div>
+            <div class="shop-status">{% if shop.opened %}營業中{% else %}休息中{% endif %}</div>
         </div>
         <!-- Nav tabs -->
         <div class="row menu">
             {% regroup items by category as items_by_category %}
             <div id="item-list" class="list-group col-3">
-                <a class="list-group-item list-group-item-action" href="#all">全部</a>
                 {% for category in items_by_category %}
-                <a class="list-group-item list-group-item-action"
+                <a class="list-group-item list-group-item-action animate__animated animate__flipInX"
                     href="#cate-{{category.grouper}}">{{category.grouper}}</a>
                 {% endfor %}
             </div>
 
             <div class="col">
                 <div class="row-12" data-spy="scroll" data-target="#item-list" data-offset="0">
-                    <h1 id="list-item-1">全部</h1>
-                    {% for item in items %}
-                    <div class="card mb-3 item">
-                        <div class="row no-gutters">
-                            <div class="col-md-2">
-                                <img src="{{ item.image.url }}" class="card-img" alt="404 image not found">
-                            </div>
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ item.name }}</h5>
-                                    <span class="price">${{ item.price }}</span>
-                                    <p class="card-text text-muted">{{ item.desc }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <h2 class="text-muted">空空如也...</h2>
-                    {% endfor %}
                     <!-- categories -->
                     {% for category in items_by_category %}
-
                     <h1 id="list-item-{{category.grouper}}">{{category.grouper}}</h1>
                     {% for item in category.list %}
-                    <div class="card mb-3 item">
+                    {% if item.status != 2 %}
+                    <div class="card mb-3 item animate__animated animate__fadeInUp">
                         <div class="row no-gutters">
                             <div class="col-md-2">
                                 <img src="{{ item.image.url }}" class="card-img" alt="404 image not found">
@@ -137,8 +236,14 @@
                                     <p class="card-text text-muted">{{ item.desc }}</p>
                                 </div>
                             </div>
+                            {% if item.status == 0 %}
+                            <i class="fas fa-cart-plus fa-2x addcart-icon" onclick="cb({{ item }})" ></i>
+                            {% elif item.status == 1 %}
+                            <span class="addcart-icon" >已下架</span>
+                            {% endif %}
                         </div>
                     </div>
+                    {% endif %}
                     {% endfor %}
                     {% endfor %}
                 </div>
@@ -150,8 +255,18 @@
 
 {% block action_menu_icon %}
 <i class="fas fa-shopping-cart"></i>
+<span class="items-in-cart">0</span>
 {% endblock %}
 
 {% block action_menu_content %}
-<a>asdasd</a>
+<div class="card" id="shopping-cart-card">
+    <div class="card-header justify-content-between row">
+        <h4>購物車</h4><button class="btn far fa-trash-alt" title="清空購物車" onclick="empty_cart();"></button>
+    </div>
+    
+    <div class="card-body" id="cart-items">
+
+    </div>
+</div>
+
 {% endblock %}
