@@ -47,7 +47,7 @@ class Item(models.Model):
         (1, '已下架'),
         (2, '已刪除'),
     )
-    shop = models.OneToOneField(Shop, on_delete=models.CASCADE, related_name='items')
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='items')
     name = models.CharField(max_length=16)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     status = models.IntegerField(choices=ITEM_STATUS, default=1)
@@ -68,10 +68,9 @@ class Order(models.Model):
         (5, '完成'),
         (6, '取消'),
     )
-    order_id = models.AutoField(primary_key = True)
-    shop = models.OneToOneField(Shop, on_delete=models.CASCADE, related_name='shop')
-    customer = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cutomer")
-    delivery = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="delivery")
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='shop')
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cutomer")
+    delivery = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="delivery")
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     order_time = models.TimeField(default=timezone.now)
     price_sum = models.DecimalField(max_digits=6, decimal_places=2)
@@ -81,9 +80,8 @@ class Order(models.Model):
                 return str(self.order_id), str(self.price_sum)
 
 class OrderItem(models.Model):
-    items = models.AutoField(primary_key = True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    item = models.OneToOneField(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     quantity = models.IntegerField()
 

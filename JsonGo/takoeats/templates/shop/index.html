@@ -6,74 +6,74 @@
 {% block script %}
 <script>
     // ugly code, I know but deadline is short
-    function render_cart(cart){
+    function render_cart(cart) {
         var item_sum = 0;
         var price_total = 0;
         $('#cart-items').html('');
-        for(k in cart){
-            var item_html = '<div class="card">'+
-                                '<div class="card-body">'+
-                                    '<div class="row justify-content-between">'+
-                                        '<h5 class="card-title">'+cart[k].name+'</h5>'+
-                                        ' X <p class="card-text">'+cart[k].quantity+'</p>'+
-                                        '=<p class="card-text">$'+cart[k].price*cart[k].quantity+'</p>'+
-                                        '<button class="btn fas fa-times" onclick="remove_item('+ k +')"></button>'+
-                                        '</div>'+
-                                '</div>'+
-                            '</div>';
+        for (k in cart) {
+            var item_html = '<div class="card">' +
+                '<div class="card-body">' +
+                '<div class="row justify-content-between">' +
+                '<h5 class="card-title">' + cart[k].name + '</h5>' +
+                ' X <p class="card-text">' + cart[k].quantity + '</p>' +
+                '=<p class="card-text">$' + cart[k].price * cart[k].quantity + '</p>' +
+                '<button class="btn fas fa-times" onclick="remove_item(' + k + ')"></button>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
             $('#cart-items').html(item_html);
-            price_total += cart[k].price*cart[k].quantity;
+            price_total += cart[k].price * cart[k].quantity;
             item_sum += cart[k].quantity;
         }
         $('.items-in-cart').text('(' + item_sum + ')' + ' $' + price_total);
     }
 
-    $(document).ready(function(){
+    $(document).ready(function () {
         var shopping_cart = sessionStorage.getItem('cart');
-        if(shopping_cart != undefined){
+        if (shopping_cart != undefined) {
             shopping_cart = JSON.parse(shopping_cart);
-        }else{
+        } else {
             shopping_cart = {};
         }
         render_cart(shopping_cart);
     });
-    function cb(item){
+    function cb(item) {
         var shop_id = sessionStorage.getItem('shop_id');
-        if(shop_id != {{ shop.id }}){
-            sessionStorage.setItem('shop_id', {{ shop.id }});
-            sessionStorage.setItem('cart', JSON.stringify({}));
+        if (shop_id != {{ shop.id }}) {
+        sessionStorage.setItem('shop_id', {{ shop.id }});
+    sessionStorage.setItem('cart', JSON.stringify({}));
         }
-        var shopping_cart = sessionStorage.getItem('cart');
-        if(shopping_cart != undefined){
-            shopping_cart = JSON.parse(shopping_cart);
-        }else{
-            shopping_cart = {};
-        }
-
-        console.log(item);
-        if(shopping_cart[item.id] == undefined){
-            shopping_cart[item.id] = {
-                'id': item.id,
-                'name': item.name,
-                'price': item.price,
-                'quantity': 1
-            };
-        }else{
-            shopping_cart[item.id].quantity += 1;
-        }
-        console.log(shopping_cart);
-        sessionStorage.setItem('cart', JSON.stringify(shopping_cart));
-        render_cart(shopping_cart);
+    var shopping_cart = sessionStorage.getItem('cart');
+    if (shopping_cart != undefined) {
+        shopping_cart = JSON.parse(shopping_cart);
+    } else {
+        shopping_cart = {};
     }
 
-    function remove_item(k){
+    console.log(item);
+    if (shopping_cart[item.id] == undefined) {
+        shopping_cart[item.id] = {
+            'id': item.id,
+            'name': item.name,
+            'price': item.price,
+            'quantity': 1
+        };
+    } else {
+        shopping_cart[item.id].quantity += 1;
+    }
+    console.log(shopping_cart);
+    sessionStorage.setItem('cart', JSON.stringify(shopping_cart));
+    render_cart(shopping_cart);
+    }
+
+    function remove_item(k) {
         console.log('remove', k);
         var shopping_cart = sessionStorage.getItem('cart');
         shopping_cart = JSON.parse(shopping_cart);
-        if(shopping_cart[k].quantity > 1){
+        if (shopping_cart[k].quantity > 1) {
             console.log('remove 1');
             shopping_cart[k].quantity -= 1;
-        }else{
+        } else {
             console.log('delete');
             delete shopping_cart[k];
             console.log(shopping_cart);
@@ -82,9 +82,29 @@
         render_cart(shopping_cart);
     }
 
-    function empty_cart(){
+    function empty_cart() {
         sessionStorage.setItem('cart', JSON.stringify({}));
         render_cart({});
+    }
+
+    $('#shop-toggle').change(function () {
+        var checked = $('#shop-toggle').prop('checked');
+        console.log(checked);
+        $.ajax({
+            url: '{% url "toggleshop" %}',
+            type: 'POST',
+            data: {
+                'shop_id': {{ shop.id }},
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+        success: function (data) {
+            console.log(data);
+        }
+        });
+    });
+
+    function add_item() {
+
     }
 </script>
 {% endblock %}
@@ -188,6 +208,28 @@
         background-color: transparent;
         border: none;
     }
+
+    .btn-primary {
+        background-color: #00ff4c;
+        border-color: #00ff4c;
+    }
+
+    .btn-primary:hover {
+        background-color: #77f69d;
+        border-color: #00ff4c;
+    }
+
+    .btn-default {
+        color: rgb(138, 138, 138);
+        background-color: #ffffff;
+        border-color: #727272;
+    }
+
+    .add-item {
+        position: relative;
+        top: 30px;
+        right: 50px;
+    }
 </style>
 {% endblock %}
 
@@ -197,16 +239,57 @@
     <div class="card view">
         <div class="banner col-12">
             {% if shop.image_url %}
-            <img src="{{ shop.image.url }}" class="img-fluid banner-img animate__animated animate__fadeIn" alt="Responsive image" draggable="false">
+            <img src="{{ shop.image.url }}" class="img-fluid banner-img animate__animated animate__fadeIn"
+                alt="Responsive image" draggable="false">
             {% else %}
-            <img src="https://picsum.photos/1920/300" class="img-fluid banner-img animate__animated animate__fadeIn" alt="Responsive image"
-                draggable="false">
+            <img src="https://picsum.photos/800/300" class="img-fluid banner-img animate__animated animate__fadeIn"
+                alt="Responsive image" draggable="false">
             {% endif %}
             <a onclick="window.history.go(-1);"><i class="fas fa-arrow-left fa-2x back-btn"></i></a>
             <div class="text-white banner-header">{{ shop.name }}</div>
             <div class="banner-owner">店家: {{ shop.owner.username }}</div>
-            <div class="shop-status">{% if shop.opened %}營業中{% else %}休息中{% endif %}</div>
+            <div class="shop-status">
+                {% if is_self %}
+                {% if shop.opened %}
+                <input id="shop-toggle" checked type="checkbox" data-toggle="toggle" data-on="開店中" data-off="關店中" />
+                {% else %}
+                <input id="shop-toggle" type="checkbox" data-toggle="toggle" data-on="開店中" data-off="關店中" />
+                {% endif %}
+                {% else %}
+                {% if shop.opened %}營業中{% else %}休息中{% endif %}
+                {% endif%}
+            </div>
         </div>
+        {% if is_self %}
+        <div class="row justify-content-end">
+            <button class="btn btn-warning add-item" data-toggle="modal" data-target="#exampleModal"><i
+                    class="fas fa-plus"></i> 新增商品</button>
+        </div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">新增商品</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="add-item-form" method="post" action="{% url 'additem' %}" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        {% load bootstrap4 %}
+                        {% bootstrap_form form %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">新增</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <!-- Nav tabs -->
         <div class="row menu">
             {% regroup items by category as items_by_category %}
@@ -236,10 +319,14 @@
                                     <p class="card-text text-muted">{{ item.desc }}</p>
                                 </div>
                             </div>
+                            {% if is_self %}
+
+                            {% else %}
                             {% if item.status == 0 %}
-                            <i class="fas fa-cart-plus fa-2x addcart-icon" onclick="cb({{ item }})" ></i>
+                            <i class="fas fa-cart-plus fa-2x addcart-icon" onclick="cb({{ item }})"></i>
                             {% elif item.status == 1 %}
-                            <span class="addcart-icon" >已下架</span>
+                            <span class="addcart-icon">已下架</span>
+                            {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -263,7 +350,7 @@
     <div class="card-header justify-content-between row">
         <h4>購物車</h4><button class="btn far fa-trash-alt" title="清空購物車" onclick="empty_cart();"></button>
     </div>
-    
+
     <div class="card-body" id="cart-items">
 
     </div>

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 
-from .forms import LoginForm, RegisterForm, InfoUpdateForm
+from .forms import LoginForm, RegisterForm, InfoUpdateForm, AddItemForm
 from . import models
 
 def index(request):
@@ -85,24 +85,26 @@ def s(request, user_name=None):
     """
         Guide user to shop mainpage
     """
-    print(request.path)
-    is_self = False
-    if not user_name and not request.user.is_superuser:
-        # create shop if not exist
-        if not models.Shop.objects.filter(owner=request.user).exists():
-            owner = models.User.objects.filter(user_entity=request.user).first()
-            models.Shop.objects.create(owner=request.user, name=f'{owner.display_name}的商店').save()
-            print('shop created')
-        shop = models.Shop.objects.filter(owner=request.user).first()
-        is_self = True
-    else:
-        # visit other shop
-        shop = models.Shop.objects.filter(owner__username=user_name).first()
-        if shop is None:
-            return render(request, 'shop/index.html', {'is_self': True, 'error': '商店不存在'})
-    items = models.Item.objects.filter(shop=shop).all()
-    print(items)
-    return render(request, 'shop/index.html', {'shop': shop, 'items': items, 'is_self': is_self})
+    if request.method == 'GET':
+        form = AddItemForm()
+        print(request.path)
+        is_self = False
+        if not user_name and not request.user.is_superuser:
+            # create shop if not exist
+            if not models.Shop.objects.filter(owner=request.user).exists():
+                owner = models.User.objects.filter(user_entity=request.user).first()
+                models.Shop.objects.create(owner=request.user, name=f'{owner.display_name}的商店').save()
+                print('shop created')
+            shop = models.Shop.objects.filter(owner=request.user).first()
+            is_self = True
+        else:
+            # visit other shop
+            shop = models.Shop.objects.filter(owner__username=user_name).first()
+            if shop is None:
+                return render(request, 'shop/index.html', {'is_self': True, 'error': '商店不存在'})
+        items = models.Item.objects.filter(shop=shop).all()
+        print(items)
+        return render(request, 'shop/index.html', {'shop': shop, 'items': items, 'is_self': is_self, 'form': form})
 
 @login_required
 def user_profile(request, user_name):
