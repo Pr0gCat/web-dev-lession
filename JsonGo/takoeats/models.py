@@ -55,8 +55,11 @@ class Item(models.Model):
     image = models.ImageField(upload_to=hash_img, null=True)
     desc = models.CharField(max_length=100, blank=True, default="")
 
+    def as_json(self):
+        return json.dumps({'id': self.id, 'name': self.name, 'price': float(self.price), 'status': self.status, 'category': self.category.name})
+    
     def __str__(self):
-            return json.dumps({'id': self.id, 'name': self.name, 'price': float(self.price), 'status': self.status, 'category': self.category.name})
+            return f'{self.shop.name} - {self.name}(${self.price}, {self.ITEM_STATUS[self.status][1]}, {self.category.name})'
 
 
 class Order(models.Model):

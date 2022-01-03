@@ -19,9 +19,11 @@ def toggle_shop(request):
     if request.method == 'POST' and request.is_ajax():
         shop_id = request.POST.get('shop_id')
         shop = Shop.objects.get(id=shop_id)
+        checked = request.POST.get('checked')
         if shop.owner != request.user:
             return JsonResponse({'status': 'faliure'})
-        shop.opened = not shop.opened
+        shop.opened = not shop.opened if checked is None else checked == 'true'
+        print(shop.opened)
         shop.save()
         return JsonResponse({'status': 'success'})
     elif request.method == 'GET':
@@ -57,6 +59,18 @@ def add_item(request):
                             )
     return redirect('/s')
 
+@login_required
+def item_status(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        checked = request.POST.get('checked')
+        item = Item.objects.get(id=item_id)
+        if item.shop.owner != request.user:
+            return JsonResponse({'status': 'faliure'})
+        item.status = checked
+        item.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'faliure'})
 @login_required
 def accept_order(request):
     pass
@@ -97,6 +111,7 @@ urlpatterns = [
     path('randshop', get_random_opened_shop, name='randshop'),
     path('toggleshop', toggle_shop, name='toggleshop'),
     path('additem', add_item, name='additem'),
+    path('itemstatus', item_status, name='itemstatus'),
     path('acceptorder', accept_order, name='acceptorder'),
     path('cancelorder', cancel_order, name='cancelorder'),
     path('getavailableorder', get_available_order, name='getavailableorder'),

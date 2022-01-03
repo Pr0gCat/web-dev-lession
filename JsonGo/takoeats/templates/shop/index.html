@@ -37,17 +37,22 @@
         }
         render_cart(shopping_cart);
     });
+
     function cb(item) {
         var shop_id = sessionStorage.getItem('shop_id');
-        if (shop_id != {{ shop.id }}) {
-        sessionStorage.setItem('shop_id', {{ shop.id }});
-    sessionStorage.setItem('cart', JSON.stringify({}));
-        }
     var shopping_cart = sessionStorage.getItem('cart');
     if (shopping_cart != undefined) {
         shopping_cart = JSON.parse(shopping_cart);
     } else {
         shopping_cart = {};
+    }
+    if (shop_id != {{ shop.id }}) {
+        if(Object.keys(shopping_cart).length == 0){
+            sessionStorage.setItem('shop_id', {{ shop.id }});
+            sessionStorage.setItem('cart', JSON.stringify({}));
+        }else{
+            alert('請先結帳或清空購物車');
+        }
     }
 
     console.log(item);
@@ -95,7 +100,8 @@
             type: 'POST',
             data: {
                 'shop_id': {{ shop.id }},
-        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'checked': checked,
             },
         success: function (data) {
             console.log(data);
@@ -103,9 +109,42 @@
         });
     });
 
-    function add_item() {
-
+    window.onbeforeunload = function(e){
+        if($('#shop-toggle').prop('checked')){
+            $.ajax({
+                url: '{% url "toggleshop" %}',
+                type: 'POST',
+                data: {
+                    'shop_id': {{ shop.id }},
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'checked': false,
+                },
+                success: function (data) {
+                console.log(data);
+                }
+            });
+            $('#shop-toggle').bootstrapToggle('off');
+            e.returnValue = "你的店還開著呢, 確定要關店離開嗎?";
+            return "你的店還開著呢, 確定要關店離開嗎?";
+        }
     }
+
+    $('.item-status-toggle').change(function () {
+        var item_id = $(this).attr('itemid');
+        var checked = $(this).prop('checked');
+        $.ajax({
+            url: '{% url "itemstatus" %}',
+            type: 'POST',
+            data: {
+                'item_id': item_id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'checked': checked ? 0 : 1,
+            },
+        success: function (data) {
+            
+        }
+        });
+    });
 </script>
 {% endblock %}
 
@@ -230,6 +269,12 @@
         top: 30px;
         right: 50px;
     }
+
+    .item-op .toggle {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
 </style>
 {% endblock %}
 
@@ -319,15 +364,21 @@
                                     <p class="card-text text-muted">{{ item.desc }}</p>
                                 </div>
                             </div>
-                            {% if is_self %}
-
-                            {% else %}
-                            {% if item.status == 0 %}
-                            <i class="fas fa-cart-plus fa-2x addcart-icon" onclick="cb({{ item }})"></i>
+                            <div class="col-md-2 item-op">
+                                {% if item.status == 0 %}
+                                {% if is_self %}
+                                <input type="checkbox" class="item-status-toggle" itemid={{item.id}} checked data-toggle="toggle" data-size="normal" data-on="上架中" data-off="已下架">
+                                {% else %}
+                                <i class="fas fa-cart-plus fa-2x addcart-icon" onclick="cb({{ item.as_json }})"></i>
+                                {% endif %}
                             {% elif item.status == 1 %}
-                            <span class="addcart-icon">已下架</span>
+                                {% if is_self %}
+                                <input type="checkbox" class="item-status-toggle" itemid={{item.id}} data-toggle="toggle" data-size="normal" data-on="上架中" data-off="已下架">
+                                {% else %}
+                                <span class="addcart-icon">已下架</span>
+                                {% endif %}
                             {% endif %}
-                            {% endif %}
+                            </div>
                         </div>
                     </div>
                     {% endif %}
