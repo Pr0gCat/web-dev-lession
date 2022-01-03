@@ -31,7 +31,7 @@ class InfoUpdateForm(forms.Form):
 class AddItemForm(forms.Form):
     name = forms.CharField(label='名稱', max_length=16, required=True)
     price = forms.DecimalField(label='價格', max_digits=6, decimal_places=2, required=True)
-    status = forms.IntegerField(label='上架', required=True)
+    status = forms.BooleanField(label='上架', required=False)
     category = forms.CharField(label='類別', max_length=16, required=True)
     desc = forms.CharField(label='描述', max_length=100, required=False)
     image = forms.ImageField(label='圖片', required=False)

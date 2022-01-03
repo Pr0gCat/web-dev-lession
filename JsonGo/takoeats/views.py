@@ -103,7 +103,8 @@ def s(request, user_name=None):
             if shop is None:
                 return render(request, 'shop/index.html', {'is_self': True, 'error': '商店不存在'})
         items = models.Item.objects.filter(shop=shop).all()
-        print(items)
+        # delete item that marked as deleted
+        items = items.exclude(status=2)
         return render(request, 'shop/index.html', {'shop': shop, 'items': items, 'is_self': is_self, 'form': form})
 
 @login_required

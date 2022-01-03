@@ -51,7 +51,7 @@ def add_item(request):
                 name=request.POST.get('name'), \
                 price=request.POST.get('price'), \
                 desc=request.POST.get('desc'),\
-                status=(0 if request.POST.get('available') else 1),\
+                status=(0 if request.POST.get('status') else 1),\
                 category=category,
                 image=request.FILES.get('image')
                             )

@@ -53,7 +53,7 @@ class Item(models.Model):
     status = models.IntegerField(choices=ITEM_STATUS, default=1)
     category = models.ForeignKey(ItemCategory, null=True, on_delete=models.SET_NULL)
     image = models.ImageField(upload_to=hash_img, null=True)
-    desc = models.CharField(max_length=100, null=True)
+    desc = models.CharField(max_length=100, blank=True, default="")
 
     def __str__(self):
             return json.dumps({'id': self.id, 'name': self.name, 'price': float(self.price), 'status': self.status, 'category': self.category.name})
