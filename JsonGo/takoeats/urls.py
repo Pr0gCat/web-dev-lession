@@ -28,4 +28,11 @@ urlpatterns = [
     path('c', views.c, name='c'),
     path('d', views.d, name='d'),
     path('u/<str:user_name>', views.user_profile, name='user'),
+    path('active',views.active,name='active'),
+    path('pending',views.pending,name='pending'),
+    path('completed',views.completed,name='completed'),
+    path('cancelled',views.cancelled,name='cancelled'),
+    path('acceptorders/<int:id>',views.acceptorders,name='acceptorders'),
+    path('rejectorders/<int:id>',views.rejectorders,name='rejectorders'),
+    path('done/<int:id>',views.done,name='done')
 ]

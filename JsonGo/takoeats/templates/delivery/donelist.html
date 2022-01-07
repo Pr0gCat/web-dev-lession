@@ -1,0 +1,21 @@
+{% extends 'delivery/index.html' %}
+{% block content %}
+{% for orderlist in eachlist %}
+<div class="row">
+    <div class="col-md-6" style="margin:0 auto;">
+        <div class="card container-fluid" style="margin-top: 1rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{orderlist.customer}}  {{orderlist.address}}</h5>
+                <p class="card-text">{{orderlist.items}}</p>
+                <p class="card-text">{{orderlist.shop}}</p>
+                <p class="card-text">{{orderlist.order_time}}</p>
+
+                <p style="color:green;"><b>客戶已經收到貨</b></p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+{% endblock %}

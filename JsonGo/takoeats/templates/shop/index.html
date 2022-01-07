@@ -9,9 +9,11 @@
     function render_cart(cart) {
         var item_sum = 0;
         var price_total = 0;
+        $('.checkout-btn').attr('disabled', true);
         $('#cart-items').html('');
+        var result_html = '';
         for (k in cart) {
-            var item_html = '<div class="card">' +
+            result_html += '<div class="card">' +
                 '<div class="card-body">' +
                 '<div class="row justify-content-between">' +
                 '<h5 class="card-title">' + cart[k].name + '</h5>' +
@@ -20,11 +22,19 @@
                 '<button class="btn fas fa-times" onclick="remove_item(' + k + ')"></button>' +
                 '</div>' +
                 '</div>' +
-                '</div>';
-            $('#cart-items').html(item_html);
+                '</div><br>';
+            
             price_total += cart[k].price * cart[k].quantity;
             item_sum += cart[k].quantity;
         }
+        if(item_sum > 0){
+            $('.total-price-holder').html('$' + price_total);
+            $('.checkout-btn').html('結帳');
+            $('.checkout-btn').attr('disabled', false);
+        }else{
+            $('.checkout-btn').html('購物車是空的');
+        }
+        $('#cart-items').html(result_html);
         $('.items-in-cart').text('(' + item_sum + ')' + ' $' + price_total);
     }
 
@@ -32,6 +42,12 @@
         var shopping_cart = sessionStorage.getItem('cart');
         if (shopping_cart != undefined) {
             shopping_cart = JSON.parse(shopping_cart);
+            console.log("{{ shop.opened }}");
+            if("{{ shop.opened }}" == "False" && shopping_cart.length > 0){
+                console.log('shop is close');
+                alert('商店已經關門，請重新選購商品');
+                empty_cart();
+            }
         } else {
             shopping_cart = {};
         }
@@ -145,6 +161,27 @@
         }
         });
     });
+
+    $('.checkout-btn').click(function(){
+        console.log('checkout');
+        var shopping_cart = sessionStorage.getItem('cart');
+        shopping_cart = JSON.parse(shopping_cart);
+        $.ajax({
+            url: '{% url "createorder" %}',
+            type: 'POST',
+            data: {
+                'shop_id': {{ shop.id }},
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'items': JSON.stringify(shopping_cart),
+            },
+        success: function (data) {
+            console.log(data);
+            empty_cart();
+            window.location.href = '{% url "c" %}';
+        }
+        });
+
+    });
 </script>
 {% endblock %}
 
@@ -230,7 +267,7 @@
 
     .addcart-icon {
         position: absolute;
-        right: 3%;
+        right: 5%;
         bottom: 10%;
     }
 
@@ -275,6 +312,37 @@
         bottom: 10px;
         right: 10px;
     }
+
+    .total-price {
+        position: absolute;
+        bottom: 8%;
+        left: 10px;
+    }
+
+    .checkout-btn {
+        position: absolute;
+        background-color: rgb(2, 173, 2);
+        border-color: rgb(2, 173, 2);
+        bottom: 0%;
+        width: 100%;
+    }
+
+    .checkout-btn:hover {
+        background-color: rgb(3, 214, 3);
+        border-color: rgb(3, 214, 3);
+    }
+
+    .checkout-btn:disabled:hover {
+        color: gray;
+        background-color: #ffffff;
+        border-color: #727272;
+    }
+
+    .checkout-btn:disabled {
+        color: gray;
+        background-color: #ffffff;
+        border-color: #727272;
+    }
 </style>
 {% endblock %}
 
@@ -283,7 +351,7 @@
 <div class="container-fluid">
     <div class="card view">
         <div class="banner col-12">
-            {% if shop.image_url %}
+            {% if shop.image.url %}
             <img src="{{ shop.image.url }}" class="img-fluid banner-img animate__animated animate__fadeIn"
                 alt="Responsive image" draggable="false">
             {% else %}
@@ -365,7 +433,7 @@
                                 </div>
                             </div>
                             <div class="col-md-2 item-op">
-                                {% if item.status == 0 %}
+                                {% if item.status == 0 and shop.opened %}
                                 {% if is_self %}
                                 <input type="checkbox" class="item-status-toggle" itemid={{item.id}} checked data-toggle="toggle" data-size="normal" data-on="上架中" data-off="已下架">
                                 {% else %}
@@ -374,8 +442,8 @@
                             {% elif item.status == 1 %}
                                 {% if is_self %}
                                 <input type="checkbox" class="item-status-toggle" itemid={{item.id}} data-toggle="toggle" data-size="normal" data-on="上架中" data-off="已下架">
-                                {% else %}
-                                <span class="addcart-icon">已下架</span>
+                                {% elif shop.opened %}
+                                <span class="addcart-icon text-muted">暫時無法供應</span>
                                 {% endif %}
                             {% endif %}
                             </div>
@@ -397,14 +465,14 @@
 {% endblock %}
 
 {% block action_menu_content %}
-<div class="card" id="shopping-cart-card">
+<div id="shopping-cart-card">
     <div class="card-header justify-content-between row">
         <h4>購物車</h4><button class="btn far fa-trash-alt" title="清空購物車" onclick="empty_cart();"></button>
     </div>
 
-    <div class="card-body" id="cart-items">
-
-    </div>
+    <div class="card-body" id="cart-items"></div>
+    <span class="font-weight-bold total-price">一共 <span class="font-weight-normal total-price-holder">$0</span></span>
+    <button class="btn btn-primary checkout-btn">結帳</button>
 </div>
 
 {% endblock %}

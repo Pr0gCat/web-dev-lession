@@ -2,9 +2,11 @@ from django.urls import path
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import redirect
+import json
 
-from .models import Shop, Item, ItemCategory
+from .models import Shop, Item, ItemCategory, Order, OrderItem
 from .forms import AddItemForm
+from takoeats import models
 
 def get_random_opened_shop(request):
     pass
@@ -71,51 +73,36 @@ def item_status(request):
         item.save()
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'faliure'})
-@login_required
-def accept_order(request):
-    pass
 
 @login_required
-def cancel_order(request):
-    pass
-
-"""
-外送員
-"""
-@login_required
-def get_available_order(request):
-    pass
-
-@login_required
-def assign_order(request):
-    pass
-
-"""
-訂單管理
-"""
-@login_required
-def finish_order_task(request):
-    """
-        customer: 完成訂單
-        shop: 訂單準備完成
-        delivery: 訂單已送達
-    """
-    pass
-
-@login_required
-def get_order_status(request):
-    pass
-
+def create_order(request):
+    if request.method == 'POST' and request.is_ajax():
+        print(request.POST)
+        items = request.POST.get('items')
+        shop_id = request.POST.get('shop_id')
+        if items is None:
+            JsonResponse({'status': 'faliure'})
+        items = json.loads(items).values()
+        print(items)
+        # create order
+        address = models.User.objects.get(user_entity=request.user).address
+        shop = Shop.objects.get(id=shop_id)
+        
+        order = Order.objects.create(shop=shop, customer=request.user, delivery=None, status=1, price_sum=0, address=address)
+        price_sum = 0
+        for item in items:
+            item_id = item['id']
+            item_quantity = item['quantity']
+            item = Item.objects.get(id=item_id)
+            price = item.price * item_quantity
+            price_sum += price
+            OrderItem.objects.create(order=order, item=item, quantity=item_quantity, price=price)
+        return JsonResponse({'status': 'success'})
 
 urlpatterns = [
     path('randshop', get_random_opened_shop, name='randshop'),
     path('toggleshop', toggle_shop, name='toggleshop'),
     path('additem', add_item, name='additem'),
     path('itemstatus', item_status, name='itemstatus'),
-    path('acceptorder', accept_order, name='acceptorder'),
-    path('cancelorder', cancel_order, name='cancelorder'),
-    path('getavailableorder', get_available_order, name='getavailableorder'),
-    path('assignorder', assign_order, name='assignorder'),
-    path('finishordertask', finish_order_task, name='finishordertask'),
-    path('getorderstatus', get_order_status, name='getorderstatus'),
+    path('createorder', create_order, name='createorder'),
 ]

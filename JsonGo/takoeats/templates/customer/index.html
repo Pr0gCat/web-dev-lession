@@ -3,6 +3,43 @@
 {% block sector_name %}外送專區{% endblock %}
 {% block sector_link %}{% url 'c' %}{% endblock %}
 
-{% block content %}
+{% block style %}
+{{ block.super }}
+<style>
+    .shop{
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
 
+{% block content %}
+<div class="container">
+    <div class="row hidden-md-up">
+        {% for shop in shops %}
+        {% if shop.opened or DEBUG %}
+        {% if shop.owner != request.user %}
+        <div class="col-md-3">
+            <div class="card shop">
+                <div class="card-block">
+                    <a href="{% url 's' user_name=shop.owner.username %}">
+                        {% if shop.image.url %}
+                        <img src="{{ shop.image.url }}" class="card-img-top img-fluid banner-img animate__animated animate__fadeIn"
+                            alt="Responsive image" draggable="false">
+                        {% else %}
+                        <img src="https://picsum.photos/400/300" class="card-img-top img-fluid banner-img animate__animated animate__fadeIn"
+                            alt="Responsive image" draggable="false">
+                        {% endif %}                        
+                    </a>
+
+                    <a class="btn stretched-link" href="{% url 's' user_name=shop.owner.username %}">
+                        <h5 class="card-title">{{ shop.name }}</h5>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

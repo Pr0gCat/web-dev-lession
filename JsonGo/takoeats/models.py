@@ -73,14 +73,14 @@ class Order(models.Model):
     )
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='shop')
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cutomer")
-    delivery = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="delivery")
+    delivery = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="delivery", null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     order_time = models.TimeField(default=timezone.now)
     price_sum = models.DecimalField(max_digits=6, decimal_places=2)
     address = models.CharField(max_length=100)
 
     def __str__(self):
-                return str(self.order_id), str(self.price_sum)
+                return f'{self.shop.name} -> {self.delivery} -> {self.customer.username} - {self.STATUS_CHOICES[self.status][1]}'
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
@@ -89,5 +89,5 @@ class OrderItem(models.Model):
     quantity = models.IntegerField()
 
     def __str__(self):
-                    return str(self.items), str(self.quantity)
+                    return f'{self.order.shop.name} -> {self.order.customer.username} - {self.item.name}'
 

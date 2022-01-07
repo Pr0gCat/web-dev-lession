@@ -1,211 +1,55 @@
-{% extends "homepage_base.html" %}
+{% extends "homepage_base.html"%}
+{% block tabs %}
+    <ul class="navbar-nav mr-auto">
 
-{% block sector_name %}外送員專區{% endblock %}
-{% block sector_link %}{% url 'd' %}{% endblock %}
-
-{% block style %}
-{{ block.super }}
-<style>
-    .navbar-default{
-        border:none;
-        border-radius: 25px;
-
-    }
-    .navbar-collapse{
-        padding: 0px;
-        margin: 0px;
-    }
-    nav ul{
-        width: auto;
-        background:#62567e !important;
-        border-radius: 25px;
-    }
-    nav ul li{
-        display: inline;
-        position: relative;
-
-    }
-    nav ul li ul{
-        width: 175px !important;
-        position: absolute;
-        top:50px;
-        left:0;
-        padding: 0;
-        display: none;
-    }
-    nav ul li:hover{
-        background-color: transparent;
-    }
-    nav ul li ul li a{
-        display:block;
-        margin-top: 1px;
-        padding:10px;
-        background: #62567e;
-        width: auto;
-    }
-    nav ul li a i{
-        margin-right: 5px;
-    }
-
-    nav ul li ul li ul{
-        left: 175px;
-        top:-27px;
-        position: absolute;
-        display: none;
-    }
-    nav ul .fa-sort-desc{
-        position: relative;
-        top: -3px;
-        right: -5px;
-    }
-    nav ul li ul li i{
-        margin-left:20px !important;
-    }
-    nav ul li a:hover{
-        background:#daa520 !important;
-        text-decoration: none;
-    }
-    nav ul li a{
-        text-decoration: none;
-        font-weight: bold;
-        text-transform: uppercase;
-        color: #fff !important;
-        border-radius: 25px;
-    }
-    nav ul li > ul{
-        background:transparent !important;
-        display: block;
-        visibility: hidden;
-        opacity: 0;
-        -webkit-transition: all 0.5s ease-in-out;
-        -moz-transition: all 0.5s ease-in-out;
-        -o-transition: all 0.5s ease-in-out;
-        transition: all 0.5s ease-in-out;
-    }
-    nav ul li:hover > ul{
-        display: block;
-        visibility: visible;
-        opacity: 1;
-    }
-    .stylish-input-group .input-group-addon{
-        background: white !important;
-    }
-    .stylish-input-group .form-control{
-        border-right:0;
-        box-shadow:0 0 0;
-        border-color:#ccc;
-    }
-    .stylish-input-group button{
-        border:0;
-        background:transparent;
-    }
-    nav ul .search, nav ul .custom-login, nav ul .custom-register{
-        float: right;
-    }
-    nav ul .search{
-        margin: 7px 10px 0px 0px;
-        border-radius:4px;
-        width:100px;
-    }
-    /*
-    @media only screen and (max-width:480px) {
-        .navbar-default{
-            background-color:#009BDD;
-        }
-        .navbar-default .navbar-toggle .icon-bar{
-            background-color: #fff;
-        }
-        .navbar-collapse{
-            padding:10px 20px;
-        }
-        nav ul li ul{
-            top:0px;
-            width:100% !important;
-            position: relative;
-        }
-        nav ul ul li ul{
-            position: relative !important;
-            width: 100% !important;
-        }
-        nav ul li ul li ul{
-            top:1px !important;
-            left:0px !important;
-        }
-        nav ul .search,nav ul .custom-login,nav ul .custom-register{
-            float:unset;
-        }
-    }
-*/
-
-</style>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'active' %}">外送中</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'pending' %}">目前的掛單</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'completed' %}">已經完成</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cancelled' %}">已經取消</a>
+      </li>
+    </ul>
 {% endblock %}
 
+  {% block content %}
+  {% for orderlist in eachlist %}
+  <div class="row">
+    <div class="col-md-6" style="margin:0 auto;">
+      <div class="card container-fluid" style="margin-top: 1rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{orderlist.customer}}  {{orderlist.address}}</h5>
+          <p class="card-text">{{orderlist.items}}</p>
+          <p class="card-text">{{orderlist.shop}}</p>
+          <p class="card-text">{{orderlist.order_time}}</p>
 
-{% block content %}
-<body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+          <a href="/done/{{orderlist.id}}" class="btn btn-success">完成外送</a>
+          <a href="/rejectorders/{{orderlist.id}}" class="btn btn-danger">取消外送</a>
 
-<div class="container">
-    <nav class="navbar navbar-default">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <ul class="nav navbar-nav collapse navbar-collapse" id="navbar-collapse-2">
-            <li><a href="#"> <i class="fa fa-home" aria-hidden="true"></i>Home</a></li>
-            <li><a href="#"> <i class="fa fa-list" aria-hidden="true"></i>訂單<i class="fa fa-sort-desc" aria-hidden="true"></i></a>
-                <ul>
-                    <li><a href="#">待接訂單</a></li>
-                    <li><a href="#">客取消訂單</a></li>
-                </ul>
-            </li>
-            <li><a href="#"><i class="fa fa-history" aria-hidden="true"></i>訂單歷史<i class="fa fa-sort-desc" aria-hidden="true"></i></a>
-                <ul>
-                    <li><a href="#">已經接訂單歷史</a></li>
-                    <li><a href="#">已經取消訂單</a></li>
-                </ul>
-            </li>
-            <li><a href="#"><i class="fa fa-cogs" aria-hidden="true"></i>活動狀態和配置設定</a></li>
-            <li><a href="#"><i class="fa fa-building" aria-hidden="true"></i>聯繫總部</a></li>
-            <li class="custom-login"><a><i class="fa fa-user" aria-hidden="false"></i>{ user.display_name }</a></li>
-            <li class="search">
-                <div class="input-group stylish-input-group">
-                    <input type="text" class="form-control" placeholder="Search" >
-                    <span class="input-group-addon">
-<button type="submit">
-<span class="glyphicon glyphicon-search"></span>
-</button>
-</span>
-                </div>
-            </li>
-        </ul>
-    </nav>
-</div>
 
-<div class="row">
-    <div class="leftcolumn">
-        <div class="card">
-            <h2>TITLE HEADING</h2>
-            <h5>Title description, Dec 7, 2017</h5>
-            <div class="fakeimg" style="height:200px;">Image</div>
-            <p>Some text..</p>
-            <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
         </div>
-        <div class="card">
-            <h2>TITLE HEADING</h2>
-            <h5>Title description, Sep 2, 2017</h5>
-            <div class="fakeimg" style="height:200px;">Image</div>
-            <p>Some text..</p>
-            <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
-        </div>
+      </div>
     </div>
-</div>
+  </div>
+
+  {% endfor %}
+  {% endblock %}
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
 </body>
 
-{% endblock %}
+</html>

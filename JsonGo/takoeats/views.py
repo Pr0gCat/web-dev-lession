@@ -72,13 +72,76 @@ def d(request):
     """
         Guide user to delivery mainpage
     """
-    return render(request, 'delivery/index.html')
+    mydictionary = {
+        "eachlist" : models.Order.objects.filter(status=2)
+    }
+    return render(request,'delivery/index.html',context=mydictionary)
+
+@login_required
+def active(request):
+    mydictionary = {
+        "eachlist" : models.Order.objects.filter(status=3)
+    }
+    return render(request,'delivery/activelist.html',context=mydictionary)
+
+@login_required
+def pending(request):
+    mydictionary = {
+        "eachlist" : models.Order.objects.filter(status=2)
+    }
+    return render(request,'delivery/list.html',context=mydictionary)
+
+@login_required
+def completed(request):
+    mydictionary = {
+        "eachlist" : models.Order.objects.filter(status=4)
+    }
+    return render(request,'delivery/donelist.html',context=mydictionary)
+
+@login_required
+def cancelled(request):
+    mydictionary = {
+        "eachlist" : models.Order.objects.filter(status=6)
+    }
+    return render(request,'delivery/cancelledlist.html',context=mydictionary)
+
+@login_required
+def acceptorders(request,id):
+    obj = models.Order(id=id)
+    obj.status = 3
+    obj.save(update_fields=["status"])
+    mydictionary = {
+        "eachlist" : models.Order.objects.filter(status=2)
+    }
+    return render(request,'delivery/list.html',context=mydictionary)
+
+@login_required
+def rejectorders(request,id):
+    obj = models.Order(id=id)
+    obj.status = 6
+    obj.save(update_fields=["status"])
+    mydictionary = {
+        "eachlist" : models.Order.objects.filter(status=2)
+    }
+    return render(request,'delivery/list.html',context=mydictionary)
+
+@login_required
+def done(request,id):
+    obj = models.Order(id=id)
+    obj.status = 4
+    obj.save(update_fields=["status"])
+    mydictionary = {
+        "eachlist" : models.Order.objects.filter(status=2)
+    }
+    return render(request,'delivery/list.html',context=mydictionary)
 
 def c(request):
     """
         Guide user to customer mainpage
     """
-    return render(request, 'customer/index.html')
+    DEBUG = True
+    shops = models.Shop.objects.all()
+    return render(request, 'customer/index.html', {'shops': shops, 'DEBUG': DEBUG})
 
 @login_required
 def s(request, user_name=None):
