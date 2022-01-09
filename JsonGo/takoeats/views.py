@@ -128,7 +128,7 @@ def rejectorders(request,id):
 @login_required
 def done(request,id):
     obj = models.Order(id=id)
-    obj.status = 4
+    obj.status = 5
     obj.save(update_fields=["status"])
     mydictionary = {
         "eachlist" : models.Order.objects.filter(status=2)
@@ -166,8 +166,12 @@ def s(request, user_name=None):
             if shop is None:
                 return render(request, 'shop/index.html', {'is_self': True, 'error': '商店不存在'})
         items = models.Item.objects.filter(shop=shop).all()
+        if not is_self:
+            items = items.exclude(status=1)
+        
         # delete item that marked as deleted
         items = items.exclude(status=2)
+        print(items)
         return render(request, 'shop/index.html', {'shop': shop, 'items': items, 'is_self': is_self, 'form': form})
 
 @login_required

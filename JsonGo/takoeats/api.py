@@ -83,7 +83,6 @@ def create_order(request):
         if items is None:
             JsonResponse({'status': 'faliure'})
         items = json.loads(items).values()
-        print(items)
         # create order
         address = models.User.objects.get(user_entity=request.user).address
         shop = Shop.objects.get(id=shop_id)
@@ -96,7 +95,50 @@ def create_order(request):
             item = Item.objects.get(id=item_id)
             price = item.price * item_quantity
             price_sum += price
-            OrderItem.objects.create(order=order, item=item, quantity=item_quantity, price=price)
+            OrderItem.objects.create(order=order, item=item, quantity=item_quantity, price=price).save()
+        order.price_sum = price_sum
+        order.save()
+        return JsonResponse({'status': 'success'})
+
+def get_order(request):
+    if request.method == 'GET':
+        shop_id = request.GET.get('shop_id')
+        if shop_id:
+            shop = Shop.objects.get(id=shop_id)
+            orders = Order.objects.filter(shop=shop).all()
+            orders = orders.exclude(status=3)
+            orders = orders.exclude(status=4)
+            orders = orders.exclude(status=5)
+            orders = orders.exclude(status=6)
+        else:
+            orders = Order.objects.filter(customer=request.user).all()
+            orders = orders.exclude(status=6)
+            orders = orders.exclude(status=5)
+        orders_list = []
+        for order in orders:
+            items = OrderItem.objects.filter(order=order).all()
+            o = {
+                'id': order.id,
+                'customer': models.User.objects.get(user_entity=order.customer).display_name,
+                'status': order.status,
+                'price_sum': order.price_sum,
+                'order_time': order.order_time,
+                'items': [{
+                    'name': item.item.name,
+                    'quantity': item.quantity,
+                    'price': item.price
+                } for item in items]
+            }
+            orders_list.append(o)
+        return JsonResponse({'status': 'success', 'orders': orders_list})
+
+def update_order(request):
+    if request.method == 'POST' and request.is_ajax():
+        order_id = request.POST.get('order_id')
+        order = Order.objects.get(id=order_id)
+        if order.status < 6:
+            order.status += 1
+            order.save()
         return JsonResponse({'status': 'success'})
 
 urlpatterns = [
@@ -105,4 +147,6 @@ urlpatterns = [
     path('additem', add_item, name='additem'),
     path('itemstatus', item_status, name='itemstatus'),
     path('createorder', create_order, name='createorder'),
+    path('getorder', get_order, name='getorder'),
+    path('updateorder', update_order, name='updateorder'),
 ]

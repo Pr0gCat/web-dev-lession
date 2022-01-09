@@ -136,7 +136,7 @@
                     'checked': false,
                 },
                 success: function (data) {
-                console.log(data);
+                    console.log(data);
                 }
             });
             $('#shop-toggle').bootstrapToggle('off');
@@ -180,8 +180,102 @@
             window.location.href = '{% url "c" %}';
         }
         });
-
     });
+
+    {% if is_self %}
+    function finish_order(id){
+        $.ajax({
+            url: '{% url "updateorder" %}',
+            type: 'POST',
+            data: {
+                'shop_id': {{ shop.id }},
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'order_id': id,
+            },
+        });
+    }
+
+    (function poll_orders(){
+        $.ajax({
+            url: '{% url "getorder" %}',
+            type: 'GET',
+            data: {
+                'shop_id': {{ shop.id }},
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success : function (data){
+                //render order list
+                $('#order-list').html('');
+                var orders = data.orders;
+                $('.order-in-list').html(orders.length);
+                for (const order_key in orders) {
+                    var id = orders[order_key].id;
+                    var customer = orders[order_key].customer;
+                    var total = orders[order_key].price_sum;
+                    var date = orders[order_key].order_time;
+                    var status = orders[order_key].status;
+                    btn = '';
+                    console.log('status:', status);
+                    switch(status){
+                        case 0:{
+                            btn = '<button class="btn btn-primary btn-sm" onclick="finish_order('+id+')">接受訂單</button>';
+                            break;
+                        }
+                        case 1:{
+                            btn = '<button class="btn btn-primary btn-sm" onclick="finish_order('+id+')">準備完成</button>';
+                            break;
+                        }
+                        case 2: {
+                            btn = '<span>等待外送</span>';
+                            break;
+                        }
+                        case 3: {
+                            btn = '<span>外送中</span>';
+                            break;
+                        }
+                        case 5: {
+                            btn = '<span>完成</span>';
+                            break;
+                        }
+                        case 6: {
+                            btn = '<span>取消</span>';
+                            break;
+                        }
+                    }
+                    var order_list_html = '<div class="card" style="padding:5px;overflow:hidden;">' +
+                            '<div class="card-header"><h3 class="row justify-content-between">' + customer + '的訂單' + btn +'</h4>'+ 
+                                '<span class="text-muted">' + date.split(":")[0] + ':' + date.split(":")[1] + 
+                                '</span></div>' +
+                            '<div class="card-body col">'+
+                                '<table class="table">'+
+                                    '<thead>'+
+                                        '<tr>'+
+                                            '<th scope="col">商品</th>'+
+                                            '<th scope="col">價格</th>'+
+                                            '<th scope="col">數量</th>'+
+                                            '<th scope="col">總價</th>'+
+                                        '</tr>'+
+                                    '</thead>'+
+                                    '<tbody>';
+                    for(const item_key in orders[order_key].items){
+                        var item = orders[order_key].items[item_key]
+                        order_list_html += '<tr>'+
+                            '<td>'+ item.name +'</td>'+
+                            '<td>'+ item.price +'</td>'+
+                            '<td>'+ item.quantity +'</td>'+
+                            '<td>'+ item.price * item.quantity +'</td>'+
+                        '</tr>';
+                    }
+                    $('#order-list').append(order_list_html);
+                    $('#order-list').append('</tbody></table></div>');
+                }
+                
+            }
+        }).then(function(){
+            setTimeout(poll_orders, 1000);
+        });
+    })();
+    {% endif %}
 </script>
 {% endblock %}
 
@@ -403,7 +497,7 @@
             </div>
         </div>
         {% endif %}
-        <!-- Nav tabs -->
+        <!-- category tabs -->
         <div class="row menu">
             {% regroup items by category as items_by_category %}
             <div id="item-list" class="list-group col-3">
@@ -419,7 +513,6 @@
                     {% for category in items_by_category %}
                     <h1 id="list-item-{{category.grouper}}">{{category.grouper}}</h1>
                     {% for item in category.list %}
-                    {% if item.status != 2 %}
                     <div class="card mb-3 item animate__animated animate__fadeInUp">
                         <div class="row no-gutters">
                             <div class="col-md-2">
@@ -433,15 +526,15 @@
                                 </div>
                             </div>
                             <div class="col-md-2 item-op">
-                                {% if item.status == 0 and shop.opened %}
-                                {% if is_self %}
+                            {% if is_self %} <!-- shop keeper -->
+                                {% if item.status == 0 %}
                                 <input type="checkbox" class="item-status-toggle" itemid={{item.id}} checked data-toggle="toggle" data-size="normal" data-on="上架中" data-off="已下架">
-                                {% else %}
-                                <i class="fas fa-cart-plus fa-2x addcart-icon" onclick="cb({{ item.as_json }})"></i>
-                                {% endif %}
-                            {% elif item.status == 1 %}
-                                {% if is_self %}
+                                {% elif item.status == 1 %}
                                 <input type="checkbox" class="item-status-toggle" itemid={{item.id}} data-toggle="toggle" data-size="normal" data-on="上架中" data-off="已下架">
+                                {% endif %}
+                            {% else %}
+                                {% if item.status < 2 and shop.opened %}
+                                <i class="fas fa-cart-plus fa-2x addcart-icon" onclick="cb({{ item.as_json }})"></i>
                                 {% elif shop.opened %}
                                 <span class="addcart-icon text-muted">暫時無法供應</span>
                                 {% endif %}
@@ -449,7 +542,6 @@
                             </div>
                         </div>
                     </div>
-                    {% endif %}
                     {% endfor %}
                     {% endfor %}
                 </div>
@@ -460,11 +552,25 @@
 {% endblock %}
 
 {% block action_menu_icon %}
+{% if is_self%}
+<i class="fas fa-clipboard-list"></i>
+<span class="order-in-list">0</span>
+{% else %}
 <i class="fas fa-shopping-cart"></i>
 <span class="items-in-cart">0</span>
+{% endif%}
 {% endblock %}
 
 {% block action_menu_content %}
+{% if is_self %}
+<div id="shopping-cart-card">
+    <div class="card-header justify-content-between row">
+        <h4>訂單一覽</h4>
+    </div>
+
+    <div class="card-body" id="order-list" style="overflow-y: hidden;"></div>
+</div>
+{% else %}
 <div id="shopping-cart-card">
     <div class="card-header justify-content-between row">
         <h4>購物車</h4><button class="btn far fa-trash-alt" title="清空購物車" onclick="empty_cart();"></button>
@@ -474,5 +580,5 @@
     <span class="font-weight-bold total-price">一共 <span class="font-weight-normal total-price-holder">$0</span></span>
     <button class="btn btn-primary checkout-btn">結帳</button>
 </div>
-
+{% endif %}
 {% endblock %}

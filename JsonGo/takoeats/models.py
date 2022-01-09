@@ -64,6 +64,7 @@ class Item(models.Model):
 
 class Order(models.Model):
     STATUS_CHOICES = (
+        (0, '待接單'),
         (1, '準備中'),
         (2, '等待外送'),
         (3, '外送中'),
@@ -74,7 +75,7 @@ class Order(models.Model):
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='shop')
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cutomer")
     delivery = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="delivery", null=True)
-    status = models.IntegerField(choices=STATUS_CHOICES, default=1)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)
     order_time = models.TimeField(default=timezone.now)
     price_sum = models.DecimalField(max_digits=6, decimal_places=2)
     address = models.CharField(max_length=100)

@@ -1,7 +1,199 @@
 {% extends "homepage_base.html" %}
 
-{% block sector_name %}外送專區{% endblock %}
+{% block sector_name %}客戶專區{% endblock %}
 {% block sector_link %}{% url 'c' %}{% endblock %}
+
+{% block script %}
+<script>
+    // ugly code, I know but deadline is short
+    function render_cart(cart) {
+        var item_sum = 0;
+        var price_total = 0;
+        $('.checkout-btn').attr('disabled', true);
+        $('#cart-items').html('');
+        var result_html = '';
+        for (k in cart) {
+            result_html += '<div class="card">' +
+                '<div class="card-body">' +
+                '<div class="row justify-content-between">' +
+                '<h5 class="card-title">' + cart[k].name + '</h5>' +
+                ' X <p class="card-text">' + cart[k].quantity + '</p>' +
+                '=<p class="card-text">$' + cart[k].price * cart[k].quantity + '</p>' +
+                '<button class="btn fas fa-times" onclick="remove_item(' + k + ')"></button>' +
+                '</div>' +
+                '</div>' +
+                '</div><br>';
+            
+            price_total += cart[k].price * cart[k].quantity;
+            item_sum += cart[k].quantity;
+        }
+        if(item_sum > 0){
+            $('.total-price-holder').html('$' + price_total);
+            $('.checkout-btn').html('結帳');
+            $('.checkout-btn').attr('disabled', false);
+        }else{
+            $('.checkout-btn').html('購物車是空的');
+        }
+        $('#cart-items').html(result_html);
+        $('.items-in-cart').text('(' + item_sum + ')' + ' $' + price_total);
+    }
+
+    $(document).ready(function () {
+        var shopping_cart = sessionStorage.getItem('cart');
+        if (shopping_cart != undefined) {
+            shopping_cart = JSON.parse(shopping_cart);
+            console.log("{{ shop.opened }}");
+            if("{{ shop.opened }}" == "False" && shopping_cart.length > 0){
+                console.log('shop is close');
+                alert('商店已經關門，請重新選購商品');
+                empty_cart();
+            }
+        } else {
+            shopping_cart = {};
+        }
+        render_cart(shopping_cart);
+    });
+
+    function cb(item) {
+        var shop_id = sessionStorage.getItem('shop_id');
+    var shopping_cart = sessionStorage.getItem('cart');
+    if (shopping_cart != undefined) {
+        shopping_cart = JSON.parse(shopping_cart);
+    } else {
+        shopping_cart = {};
+    }
+    // if (shop_id != {{ shop.id }}) {
+    //     if(Object.keys(shopping_cart).length == 0){
+    //         sessionStorage.setItem('shop_id', {{ shop.id }});
+    //         sessionStorage.setItem('cart', JSON.stringify({}));
+    //     }else{
+    //         alert('請先結帳或清空購物車');
+    //     }
+    // }
+
+    console.log(item);
+    if (shopping_cart[item.id] == undefined) {
+        shopping_cart[item.id] = {
+            'id': item.id,
+            'name': item.name,
+            'price': item.price,
+            'quantity': 1
+        };
+    } else {
+        shopping_cart[item.id].quantity += 1;
+    }
+    console.log(shopping_cart);
+    sessionStorage.setItem('cart', JSON.stringify(shopping_cart));
+    render_cart(shopping_cart);
+    }
+
+    function remove_item(k) {
+        console.log('remove', k);
+        var shopping_cart = sessionStorage.getItem('cart');
+        shopping_cart = JSON.parse(shopping_cart);
+        if (shopping_cart[k].quantity > 1) {
+            console.log('remove 1');
+            shopping_cart[k].quantity -= 1;
+        } else {
+            console.log('delete');
+            delete shopping_cart[k];
+            console.log(shopping_cart);
+        }
+        sessionStorage.setItem('cart', JSON.stringify(shopping_cart));
+        render_cart(shopping_cart);
+    }
+
+    function empty_cart() {
+        sessionStorage.setItem('cart', JSON.stringify({}));
+        render_cart({});
+    }
+
+    $('.checkout-btn').click(function(){
+        console.log('checkout');
+        var shopping_cart = sessionStorage.getItem('cart');
+        shopping_cart = JSON.parse(shopping_cart);
+        $.ajax({
+            url: '{% url "createorder" %}',
+            type: 'POST',
+            data: {
+                'shop_id': sessionStorage.getItem('shop_id'),
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'items': JSON.stringify(shopping_cart),
+            },
+        success: function (data) {
+            console.log(data);
+            empty_cart();
+            window.location.href = '{% url "c" %}';
+        }
+        });
+
+    });
+
+    (function poll_orders(){
+        $.ajax({
+            url: '{% url "getorder" %}',
+            type: 'GET',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success : function (data){
+                console.log(data);
+                //render order list
+                $('.order-items').html('');
+                var orders = data.orders;
+                console.log(orders.length);
+                if(orders.length>0){
+                    $('#shopping-cart-card').hide();
+                    $('.order-card').show();
+                }else{
+                    $('.order-card').hide();
+                    $('#shopping-cart-card').show();
+                }
+                for (const order_key in orders) {
+                    var id = orders[order_key].id;
+                    var customer = orders[order_key].customer;
+                    var total = orders[order_key].price_sum;
+                    var date = orders[order_key].order_time;
+                    var status = orders[order_key].status;
+                    switch(status){
+                        case 0:
+                            status = '待接單';
+                            break;
+                        case 1:
+                            status = '準備中';
+                            break;
+                        case 2:
+                            status = '等待外送';
+                            break;
+                        case 3:
+                            status = '外送中';
+                            break;
+                        case 4:
+                            status = '外送員已到達目的地';
+                            break;
+                    }
+                    $('.order-status').text(status);
+                    var order_list_html = '';
+                    for(const item_key in orders[order_key].items){
+                        var item = orders[order_key].items[item_key]
+                        order_list_html = '<tr>'+
+                            '<td>'+ item.name +'</td>'+
+                            '<td>'+ item.price +'</td>'+
+                            '<td>'+ item.quantity +'</td>'+
+                            '<td>'+ item.price * item.quantity +'</td>'+
+                        '</tr>';
+                        $('.order-items').append(order_list_html);
+                    }
+                    
+                }
+                
+            }
+        }).then(function(){
+            setTimeout(poll_orders, 1000);
+        });
+    })();
+</script>
+{% endblock %}
 
 {% block style %}
 {{ block.super }}
@@ -9,10 +201,56 @@
     .shop{
         border-radius: 10px;
     }
+
+    .dropdown-menu {
+        width: 400px;
+        height: 600px;
+    }
+
+    #shopping-cart-card {
+        height: 100%;
+    }
+
+    .card-header {
+        background-color: transparent;
+        border: none;
+    }
+    
+    .total-price {
+        position: absolute;
+        bottom: 8%;
+        left: 10px;
+    }
+
+    .checkout-btn {
+        position: absolute;
+        background-color: rgb(2, 173, 2);
+        border-color: rgb(2, 173, 2);
+        bottom: 0%;
+        width: 100%;
+    }
+
+    .checkout-btn:hover {
+        background-color: rgb(3, 214, 3);
+        border-color: rgb(3, 214, 3);
+    }
+
+    .checkout-btn:disabled:hover {
+        color: gray;
+        background-color: #ffffff;
+        border-color: #727272;
+    }
+
+    .checkout-btn:disabled {
+        color: gray;
+        background-color: #ffffff;
+        border-color: #727272;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+{{ block.super }}
 <div class="container">
     <div class="row hidden-md-up">
         {% for shop in shops %}
@@ -41,5 +279,44 @@
         {% endif %}
         {% endfor %}
     </div>
+</div>
+{% endblock %}
+
+{% block action_menu_icon %}
+<i class="fas fa-shopping-cart"></i>
+<span class="items-in-cart">0</span>
+{% endblock %}
+
+{% block action_menu_content %}
+<div class="order-card">
+    <div class="card-header justify-content-between row">
+        <h4>你的訂單</h4>
+        <h5 class="order-status"></h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>商品</th>
+                    <th>單價</th>
+                    <th>數量</th>
+                    <th>小計</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody class="order-items">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="shopping-cart-card">
+    <div class="card-header justify-content-between row">
+        <h4>購物車</h4><button class="btn far fa-trash-alt" title="清空購物車" onclick="empty_cart();"></button>
+    </div>
+
+    <div class="card-body" id="cart-items"></div>
+    <span class="font-weight-bold total-price">一共 <span class="font-weight-normal total-price-holder">$0</span></span>
+    <button class="btn btn-primary checkout-btn">結帳</button>
 </div>
 {% endblock %}
